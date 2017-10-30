@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sailing", "Sailing\Sailing.csproj", "{6ED13F2A-2E82-4486-9A61-57778B210C49}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6ED13F2A-2E82-4486-9A61-57778B210C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ED13F2A-2E82-4486-9A61-57778B210C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ED13F2A-2E82-4486-9A61-57778B210C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ED13F2A-2E82-4486-9A61-57778B210C49}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E76E4A2B-15E0-479B-A666-684143172C9F}
+	EndGlobalSection
+EndGlobal
