@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-/** Class represents one competitor in race
- *  
+/** Class represents one competitor in race,
+ *  now has only name.
  **/ 
 namespace Sailing
 {
