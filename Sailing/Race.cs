@@ -7,23 +7,15 @@ namespace Sailing
     /* Race object represents one race and positions of competitors*/
     class Race
     {
-        /* Simple structure CompetitorResult holds one Competitor and his position in race*/
-        public struct CompetitorResult
-        {
-            public Competitor competitor;
-            public int positionFinished;
-            public CompetitorResult(Competitor comp, int position)
-            {
-                this.competitor = comp;
-                this.positionFinished = position;
-            }
-        }
-
-
         private int numberOfCompetitors;
+
         private List<CompetitorResult> raceResult;
 
         private String pathToCsv;   //for ToString method
+
+        private List<Competitor> competitors;  //Race holds reference for list of competitors in Competition
+
+
 
         public int NumberOfCompetitors
         {
@@ -36,12 +28,16 @@ namespace Sailing
         }
 
         
-        public Race(String pathToCsv)
+        public Race(String pathToCsv, List<Competitor> competitors)
         {
+            this.competitors = competitors;
             this.pathToCsv = pathToCsv;
-            this.raceResult = new List<CompetitorResult>();
-            loadDataFromCsv(pathToCsv);                         //procedure
-            this.numberOfCompetitors = this.raceResult.Count;   
+            this.numberOfCompetitors = competitors.Count;
+            this.raceResult = new List<CompetitorResult>(competitors.Count);  //predicted capacity
+
+            loadDataFromCsv(pathToCsv);   //procedure for load 
+            computePoints();    //procedure for compute points 
+
         }
             
         private void loadDataFromCsv(String path)
@@ -70,21 +66,18 @@ namespace Sailing
                 /* Validate data, columns must be non-empty and second column must be positive number */
                 int position;
                 String name = row[0];
-                Exception ex = new InvalidDataException("Invalid data format in csv 2.collumn " + (x + 1) + ".row. Expected positive number");
+                Exception ex = new InvalidDataException("Invalid data format in csv 2.collumn " + (x + 1) + ".row. Expected positive number, or name of competitor was not founded");
 
                 /* Set of validation conditions for columns*/
                 bool validatedRow = true;
-                validatedRow &= (row[0] != String.Empty);
-                validatedRow &= (row[1] != String.Empty);
-
                 validatedRow &= int.TryParse(row[1], out position);
                 validatedRow &= (position > 0);
-                validatedRow &= (name.Length < 30);
+                validatedRow &= (findfCompetitorByName(name) != null);
 
                 /* Validated row can be inserted to raceResult */
-                if(validatedRow)
+                if (validatedRow)
                 {
-                     raceResult.Add(new CompetitorResult(new Competitor(name), position)); 
+                     raceResult.Add(new CompetitorResult(findfCompetitorByName(name), position)); 
                 }
                 else
                 {
@@ -92,6 +85,27 @@ namespace Sailing
                 }
             }
         }
+
+        private void computePoints()
+        {
+            foreach(CompetitorResult cr in raceResult)
+            {
+                cr.Points = 1F;
+            }
+        }
+
+        private Competitor findfCompetitorByName(String name)
+        {
+            foreach(Competitor c in competitors)
+            {
+                if(String.Equals(c.Name,name))
+                {
+                    return c;
+                }
+            }
+            return null;
+        }
+
         public override string ToString()
         {
             return "Race from: " + this.pathToCsv + " Count: " + this.numberOfCompetitors;

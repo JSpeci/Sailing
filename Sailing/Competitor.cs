@@ -11,23 +11,39 @@ namespace Sailing
 {
     class Competitor
     {
-        private String nameOfTeam;
+        private String name;
+        private float points;
 
-        public String NameOfTeam
+        public String Name
         {
-            get { return this.nameOfTeam; }
-            set { this.nameOfTeam = value; }
+            get { return this.name; }
+            set { this.name = value; }
+        }
+
+        public float Points
+        {
+            get { return this.points; }
         }
 
         public Competitor(String name)
         {
-            this.nameOfTeam = name;
+            this.name = name;
+            points = 0F;
         }
 
+        public void addPoints(float value)
+        {
+            if (value > 0)
+            {
+                this.points += value;
+            }
+            else throw new InvalidOperationException("Negative value can not be added.");
+        }
         public override string ToString()
         {
-            return "Competitor: " + nameOfTeam;
+            return "Competitor: " + name;
         }
-
+        
+        
     }
 }

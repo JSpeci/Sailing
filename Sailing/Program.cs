@@ -11,7 +11,12 @@ namespace Sailing
     {
         static void Main(string[] args)
         {
-            Race r = new Race("./data1/race1.csv");
+
+            String[] fileArray = Directory.GetFiles("./data1/", "*.csv");
+
+            Competition c = new Competition(fileArray);
+
+            Console.WriteLine(c.viewTable());
 
             Console.ReadLine();
         }
