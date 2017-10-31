@@ -66,18 +66,22 @@ namespace Sailing
                 /* Validate data, columns must be non-empty and second column must be positive number */
                 int position;
                 String name = row[0];
+                Competitor competitor = findfCompetitorByName(name);
                 Exception ex = new InvalidDataException("Invalid data format in csv 2.collumn " + (x + 1) + ".row. Expected positive number, or name of competitor was not founded");
 
                 /* Set of validation conditions for columns*/
                 bool validatedRow = true;
                 validatedRow &= int.TryParse(row[1], out position);
                 validatedRow &= (position > 0);
-                validatedRow &= (findfCompetitorByName(name) != null);
+                validatedRow &= (competitor != null);
 
                 /* Validated row can be inserted to raceResult */
                 if (validatedRow)
                 {
-                     raceResult.Add(new CompetitorResult(findfCompetitorByName(name), position)); 
+                    CompetitorResult cr = new CompetitorResult(competitor, position, this);
+                    raceResult.Add(cr);
+                    competitor.MyResults.Add(cr);
+                    competitor.MyResults.Sort();
                 }
                 else
                 {
@@ -86,11 +90,29 @@ namespace Sailing
             }
         }
 
+        /* after each race competitors position is assigned in order they finished (1, 2, 3, ..) it can happen they finished at the same time (1, 1, 2, 3)!
+            the points are assigned in the same order as position based on the pointing system, the simples point system is (1, 2, 3, 4, ...)
+            if some of the competitors finished on the same position the points are splitted between them (position: 1, 1, 2; points: 1.5, 1.5, 3)
+            */
         private void computePoints()
         {
+            raceResult.Sort(); //simple sort based on points
+
             foreach(CompetitorResult cr in raceResult)
             {
-                cr.Points = 1F;
+                cr.Points = cr.PositionFinished;
+            }
+
+            /*Ties solution*/
+
+            float points = -1;
+            foreach (CompetitorResult cr in raceResult)
+            {
+                if(cr.Points == points)
+                {
+
+                }
+                points = cr.Points;
             }
         }
 

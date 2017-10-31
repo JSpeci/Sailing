@@ -13,6 +13,7 @@ namespace Sailing
     {
         private String name;
         private float points;
+        private List<CompetitorResult> myResults;
 
         public String Name
         {
@@ -25,8 +26,11 @@ namespace Sailing
             get { return this.points; }
         }
 
+        public List<CompetitorResult> MyResults { get => myResults;  }
+
         public Competitor(String name)
         {
+            this.myResults = new List<CompetitorResult>();
             this.name = name;
             points = 0F;
         }

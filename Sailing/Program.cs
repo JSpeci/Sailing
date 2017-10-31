@@ -14,7 +14,9 @@ namespace Sailing
 
             String[] fileArray = Directory.GetFiles("./data1/", "*.csv");
 
-            Competition c = new Competition(fileArray);
+            Competitors comps = new Competitors(fileArray);
+
+            Competition c = new Competition(fileArray, comps.CompetitorsList);
 
             Console.WriteLine(c.viewTable());
 
