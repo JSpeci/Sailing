@@ -36,7 +36,7 @@ namespace Sailing
             this.raceResult = new List<CompetitorResult>(competitors.Count);  //predicted capacity
 
             loadDataFromCsv(pathToCsv);   //procedure for load 
-            computePoints();    //procedure for compute points 
+            computePointsAndRanks();    //procedure for compute points 
 
         }
             
@@ -94,26 +94,70 @@ namespace Sailing
             the points are assigned in the same order as position based on the pointing system, the simples point system is (1, 2, 3, 4, ...)
             if some of the competitors finished on the same position the points are splitted between them (position: 1, 1, 2; points: 1.5, 1.5, 3)
             */
-        private void computePoints()
+        private void computePointsAndRanks()
         {
-            raceResult.Sort(); //simple sort based on points
+            raceResult.Sort(); //simple sort based on position
 
-            foreach(CompetitorResult cr in raceResult)
-            {
-                cr.Points = cr.PositionFinished;
-            }
+            /*Ties rules implementation*/
 
-            /*Ties solution*/
+            /*if some of the competitors finished on the same position the points are splitted between them*/
 
-            float points = -1;
+            /* the rank is assigned based on points if some of the competitors has the same number of points,
+             * they have the same rank but the next rank is left out (points: 1.5, 1.5, 3, 4, rank: 1, 1, 3, 4) */
+
+            float[] positionArray = new float[this.numberOfCompetitors];
+            float[] pointsResult = new float[this.numberOfCompetitors];
+            int[] rankArray = new int[this.numberOfCompetitors];
+
+            int index = 0;
             foreach (CompetitorResult cr in raceResult)
             {
-                if(cr.Points == points)
+                positionArray[index] = (float)cr.PositionFinished;
+                index++;
+            }
+
+            float points = 1;
+            pointsResult[0] = points;
+            rankArray[0] = 1;
+            int countOfSame = 1;
+            float iter = 2;
+            for (int x = 1; x < positionArray.Length; x++)
+            {
+                if (positionArray[x - 1] == positionArray[x])
                 {
+                    points += iter;
+                    countOfSame++;
+                    rankArray[x] = ((int)iter)-countOfSame;
+                }
+                else
+                {
+                    countOfSame = 1;
+                    points = iter;
+                    rankArray[x] = (int)iter;
+                }
+                if (countOfSame > 1)
+                {
+                    for (int y = x; y > (x - countOfSame); y--)
+                    {
+                        pointsResult[y] = points / countOfSame;
+                    }
 
                 }
-                points = cr.Points;
+                else
+                {
+                    pointsResult[x] = points;
+                }
+                iter++;
             }
+
+            index = 0;
+            foreach (CompetitorResult cr in raceResult)
+            {
+                cr.Points = pointsResult[index];
+                cr.RaceRank = rankArray[index];
+                index++;
+            }
+
         }
 
         private Competitor findfCompetitorByName(String name)

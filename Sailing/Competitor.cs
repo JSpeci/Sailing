@@ -9,7 +9,7 @@ using System.Threading.Tasks;
  **/ 
 namespace Sailing
 {
-    class Competitor
+    class Competitor : IComparable<Competitor>
     {
         private String name;
         private float points;
@@ -47,7 +47,10 @@ namespace Sailing
         {
             return "Competitor: " + name;
         }
-        
-        
+
+        public int CompareTo(Competitor other)
+        {
+            return this.points.CompareTo(other.Points);
+        }
     }
 }

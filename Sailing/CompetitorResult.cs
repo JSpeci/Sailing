@@ -13,6 +13,7 @@ namespace Sailing
         private int positionFinished;
         private float points;
         private Race race;
+        private int raceRank;
 
         public int PositionFinished
         {
@@ -26,6 +27,8 @@ namespace Sailing
 
         public Competitor Comp { get { return comp; } }
 
+        public int RaceRank { get => raceRank; set => raceRank = value; }
+
         public CompetitorResult(Competitor comp, int position, Race race)
         {
             this.comp = comp;
@@ -36,7 +39,7 @@ namespace Sailing
 
         public int CompareTo(CompetitorResult other)
         {
-            return this.Points.CompareTo(other.Points);
+            return this.positionFinished.CompareTo(other.PositionFinished);
         }
     }
 }
