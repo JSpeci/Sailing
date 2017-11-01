@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Sailing
 {
-    /* Simple class for loading competitors*/
+    /* Simple class for loading competitors by names from one csv file*/
     class Competitors
     {
-        private List<Competitor> competitors;
-        private String[] pathsToCsv;
+        private List<Competitor> competitors;   //array of competitors
+        private String[] pathsToCsv;            //path for csv with names
 
         public Competitors(String[] pathsToCsv)
         {
