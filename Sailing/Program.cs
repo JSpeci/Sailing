@@ -13,16 +13,16 @@ namespace Sailing
         {
 
             //directory with csv files
-            String[] fileArray = Directory.GetFiles("./data1/", "*.csv");
+            string[] fileArray = Directory.GetFiles("./data1/", "*.csv");
 
             //competitors array
-            Competitors comps = new Competitors(fileArray);
+            CompetitorsLoader competitorsLoader = new CompetitorsLoader(fileArray);
 
             //one instance of competition
-            Competition c = new Competition(fileArray, comps.CompetitorsList);
+            Competition competition = new Competition(competitorsLoader.Competitors,competitorsLoader.Races);
 
             //output
-            Console.WriteLine(c.viewTable());
+            Console.WriteLine(competition.ViewTable());
 
             Console.ReadLine();
         }

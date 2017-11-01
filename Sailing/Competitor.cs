@@ -9,32 +9,23 @@ namespace Sailing
 {
     class Competitor : IComparable<Competitor>
     {
-        private String name;
+        private string name;
         private float points;
-        private List<CompetitorResult> myResults;
+        private List<CompetitorResult> raceResults;
 
-        public String Name
+        public List<CompetitorResult> RaceResults { get => raceResults;  }
+        public string Name { get => name; set => name = value; }
+        public float Points { get => points; }
+
+        public Competitor(string name)
         {
-            get { return this.name; }
-            set { this.name = value; }
-        }
-
-        public float Points
-        {
-            get { return this.points; }
-        }
-
-        public List<CompetitorResult> MyResults { get => myResults;  }
-
-        public Competitor(String name)
-        {
-            this.myResults = new List<CompetitorResult>();
+            this.raceResults = new List<CompetitorResult>();
             this.name = name;
-            points = 0F;
+            this.points = 0F;
         }
 
         /* Adding points to atrribute points. In foreach can not be modified property points. */
-        public void addPoints(float value)
+        public void AddPoints(float value)
         {
             if (value > 0)
             {

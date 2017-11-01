@@ -9,67 +9,46 @@ namespace Sailing
 {
     class Competition
     {
+
         /* Simple struct holds pair Competitor and his rank in competition*/
-        public struct CompetitorRank
+        public struct CompetitorsRankInCompetition
         {
             public Competitor competitor;
-            public int rank;
-            public CompetitorRank(Competitor c, int rank)
+            public int rankInCompetition;
+            public CompetitorsRankInCompetition(Competitor competitor, int rank)
             {
-                this.competitor = c;
-                this.rank = rank;
+                this.competitor = competitor;
+                this.rankInCompetition = rank;
             }
         }
 
 
         private List<Competitor> competitors; //competitors list reference
-
         private List<Race> races;             //races in this competition
+        private List<CompetitorsRankInCompetition> ranks;   //ranks of competitors in this competition
+        private int discards = 1;     //For discards n=1 (the worst race shouldn't be taken into account).  
+ 
 
-        private List<CompetitorRank> ranks;   //ranks of competitors in this competition
+        public List<CompetitorsRankInCompetition> Ranks { get => ranks; }
+        public int Discards { get => discards; }
 
-        /* For discards n=1 (the worst race shouldn't be taken into account).  */
-        private int discards = 1;
-
-        private String[] pathsToCsv;    //paths to CSV files - should be directory path
-
-        public List<CompetitorRank> Ranks { get => ranks; }
-
-        public Competition(String[] pathsToCsv, List<Competitor> competitors)
+        public Competition(List<Competitor> competitors, List<Race> races)
         {
-            races = new List<Race>();
             this.competitors = competitors;
-            this.pathsToCsv = pathsToCsv;
+            this.races = races;
 
-            //there are multiple races (2-16) in a single competition
-            if(pathsToCsv.Length < 2 || pathsToCsv.Length > 16)
-            {
-                throw new Exception("Count of csv files is not in range 2-16, depends on rules.");
-            }
-
-            
-            makeRacesFromData();        //procedure
             sumPoints();                //procedure
             computeRanks();             //procedure
         }
 
         
 
-        /* Loops through CSV files and makes races objects*/
-        private void makeRacesFromData()
-        {
-            foreach (String s in pathsToCsv)
-            {
-                races.Add(new Race(s, competitors));
-            }
-        }
-
         private void computeRanks()
         {
 
             competitors.Sort(); //competitors sorted by points
 
-            this.ranks = new List<CompetitorRank>(competitors.Count);
+            this.ranks = new List<CompetitorsRankInCompetition>(competitors.Count);
 
             /* Temporary arrays for computing ranks from points*/
             int[] rankArray = new int[competitors.Count];
@@ -104,7 +83,7 @@ namespace Sailing
             index = 0;
             foreach (Competitor c in competitors)
             {
-                Ranks.Add(new CompetitorRank(c, rankArray[index]));
+                Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
                 index++;
             }
         }
@@ -124,31 +103,32 @@ namespace Sailing
                 //left out n=1 worst races
 
                 float sum = 0;
-                int myRaceCount = c.MyResults.Count;
+                int racesCount = c.RaceResults.Count;
 
-                /*c.MyResults is sorted list. Sort method called when each CompetitorResult object added in Race method loadDataFromCsv*/
-                foreach (CompetitorResult cr in c.MyResults)
+                /*c.RaceResults is sorted list. Sort method called when each CompetitorResult object added in Race method loadDataFromCsv*/
+                foreach (CompetitorResult cr in c.RaceResults)
                 {
-                    if (myRaceCount != this.discards)
+                    if (racesCount != this.discards)
                     {
-                        sum += cr.Points;
+                        //the result of competition is simple a sum of race points for each competitor
+                        sum += cr.PointsInRace;
                     }
-                    myRaceCount--;
+                    racesCount--;
                 }
-                c.addPoints(sum);
+                c.AddPoints(sum);
             }
         }
 
         /* Console output string */
-        public String viewTable()
+        public string ViewTable()
         {
             StringBuilder sb = new StringBuilder();
 
             sb.Append(String.Format("|{0,8}|{1,8}|{2,8}|", "Name", "Rank", "Points"));
             sb.Append("\n");
-            foreach (CompetitorRank cr in Ranks)
+            foreach (CompetitorsRankInCompetition cr in Ranks)
             {        
-                sb.Append(String.Format("|{0,8}|{1,8}|{2,8}|", cr.competitor.Name, cr.rank.ToString(), cr.competitor.Points.ToString()));
+                sb.Append(String.Format("|{0,8}|{1,8}|{2,8}|", cr.competitor.Name, cr.rankInCompetition.ToString(), cr.competitor.Points.ToString()));
                 sb.Append("\n");
             }
 
