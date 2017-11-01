@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Sailing
 {
-    /* Simple structure CompetitorResult holds one Competitor and his position in race, reference to race, and calculated rank */
+    /* CompetitorResult holds one Competitor and his position in ONE race, reference to race, and calculated rank */
     class CompetitorResult : IComparable<CompetitorResult>
     {
-        private Competitor comp;
-        private int positionFinished;
-        private float points;
-        private Race race;
-        private int raceRank;
+        private Competitor comp;    //copmetitor reference
+        private int positionFinished;  //position competitor finished in one race
+        private float points;       //computed points in that race
+        private Race race;          //reference to raceObject
+        private int raceRank;       //rank given - computed in one race
 
         public int PositionFinished
         {
@@ -37,6 +37,7 @@ namespace Sailing
             this.points = 0F;
         }
 
+        /* Comparable to be sort. In sorted array can be computed points and rank in race*/
         public int CompareTo(CompetitorResult other)
         {
             return this.positionFinished.CompareTo(other.PositionFinished);

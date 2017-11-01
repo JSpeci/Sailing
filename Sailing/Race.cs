@@ -4,17 +4,21 @@ using System.IO;
 
 namespace Sailing
 {
-    /* Race object represents one race and positions of competitors*/
+    /* Race object represents one race and positions of competitors 
+       Loads data from one csv
+       Build data structures
+       Compute points and ranks in one race
+    */
     class Race
     {
         private int numberOfCompetitors;
 
+        /*List of competitors and his points, rank*/
         private List<CompetitorResult> raceResult;
 
-        private String pathToCsv;   //for ToString method
+        private String pathToCsv;
 
         private List<Competitor> competitors;  //Race holds reference for list of competitors in Competition
-
 
 
         public int NumberOfCompetitors
@@ -27,7 +31,7 @@ namespace Sailing
             get { return this.raceResult; }
         }
 
-        
+
         public Race(String pathToCsv, List<Competitor> competitors)
         {
             this.competitors = competitors;
@@ -37,9 +41,8 @@ namespace Sailing
 
             loadDataFromCsv(pathToCsv);   //procedure for load 
             computePointsAndRanks();    //procedure for compute points 
-
         }
-            
+
         private void loadDataFromCsv(String path)
         {
             /* try to read file */
@@ -48,7 +51,7 @@ namespace Sailing
             {
                 allLines = File.ReadAllLines(path);
             }
-            catch(FileNotFoundException e)
+            catch (FileNotFoundException e)
             {
                 throw new FileNotFoundException(message: "Invalid path to csv file");
             }
@@ -90,13 +93,17 @@ namespace Sailing
             }
         }
 
-        /* after each race competitors position is assigned in order they finished (1, 2, 3, ..) it can happen they finished at the same time (1, 1, 2, 3)!
+
+        private void computePointsAndRanks()
+        {
+
+            /* after each race competitors position is assigned in order they finished (1, 2, 3, ..) it can happen they finished at the same time (1, 1, 2, 3)!
             the points are assigned in the same order as position based on the pointing system, the simples point system is (1, 2, 3, 4, ...)
             if some of the competitors finished on the same position the points are splitted between them (position: 1, 1, 2; points: 1.5, 1.5, 3)
             */
-        private void computePointsAndRanks()
-        {
-            raceResult.Sort(); //simple sort based on position
+
+            /* Working on sorted competitors sorted by position/time finished in race */
+            raceResult.Sort();
 
             /*Ties rules implementation*/
 
@@ -105,10 +112,12 @@ namespace Sailing
             /* the rank is assigned based on points if some of the competitors has the same number of points,
              * they have the same rank but the next rank is left out (points: 1.5, 1.5, 3, 4, rank: 1, 1, 3, 4) */
 
-            float[] positionArray = new float[this.numberOfCompetitors];
-            float[] pointsResult = new float[this.numberOfCompetitors];
-            int[] rankArray = new int[this.numberOfCompetitors];
+            /*Computed on temporary float arrays */
+            float[] positionArray = new float[this.numberOfCompetitors];    //array of positions from csv as competitors finished
+            float[] pointsResult = new float[this.numberOfCompetitors];     //computed points
+            int[] rankArray = new int[this.numberOfCompetitors];            //computed rank in one race
 
+            //filling array of positions
             int index = 0;
             foreach (CompetitorResult cr in raceResult)
             {
@@ -117,17 +126,17 @@ namespace Sailing
             }
 
             float points = 1;
-            pointsResult[0] = points;
+            pointsResult[0] = points;   //first filled manually
             rankArray[0] = 1;
             int countOfSame = 1;
-            float iter = 2;
+            float iter = 2;             //iter counts rank points for single position competitors
             for (int x = 1; x < positionArray.Length; x++)
             {
                 if (positionArray[x - 1] == positionArray[x])
                 {
-                    points += iter;
+                    points += iter;     //sum of points will be divided into comps with same position
                     countOfSame++;
-                    rankArray[x] = ((int)iter)-countOfSame;
+                    rankArray[x] = ((int)iter) - countOfSame;
                 }
                 else
                 {
@@ -135,6 +144,7 @@ namespace Sailing
                     points = iter;
                     rankArray[x] = (int)iter;
                 }
+                //if I had many same values, back going for recompute points divided
                 if (countOfSame > 1)
                 {
                     for (int y = x; y > (x - countOfSame); y--)
@@ -150,6 +160,7 @@ namespace Sailing
                 iter++;
             }
 
+            //refilling back to data structure od CompetitorResults
             index = 0;
             foreach (CompetitorResult cr in raceResult)
             {
@@ -160,11 +171,12 @@ namespace Sailing
 
         }
 
+        /*Returns reference to Competitor identified by name*/
         private Competitor findfCompetitorByName(String name)
         {
-            foreach(Competitor c in competitors)
+            foreach (Competitor c in competitors)
             {
-                if(String.Equals(c.Name,name))
+                if (String.Equals(c.Name, name))
                 {
                     return c;
                 }
