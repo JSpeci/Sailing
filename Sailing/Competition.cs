@@ -51,7 +51,7 @@ namespace Sailing
             this.ranks = new List<CompetitorsRankInCompetition>(competitors.Count);
 
             /* Temporary arrays for computing ranks from points*/
-            int[] rankArray = new int[competitors.Count];
+            int[] rankArray = new int[competitors.Count];       
             float[] pointsArray = new float[competitors.Count];
             int index = 0;
             foreach (Competitor c in competitors)
@@ -60,16 +60,18 @@ namespace Sailing
                 index++;
             }
 
-            int iter = 1;
-            float previous = -1F;
+            int iter = 1;   //rank for competitors with different sum of points
+            float previous = -1F;   //temporary variable
             for(int x = 0; x < pointsArray.Length; x++)
             {
+                //if competitor has same sum of points as previous competitor, they have same rank
                 if(previous == pointsArray[x])
                 {
                     rankArray[x] = rankArray[x - 1];
                 }
                 else
                 {
+                    // rank assigned by order
                     rankArray[x] = iter;
                 }
                 iter++;
