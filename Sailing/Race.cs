@@ -12,21 +12,19 @@ namespace Sailing
     class Race
     {
         private int numberOfCompetitorsInRace;
-        private List<CompetitorResult> raceResult; //List of competitors and his points, rank
 
-        public int NumberOfCompetitors { get => numberOfCompetitorsInRace; }
-        public List<CompetitorResult> RaceResult { get => raceResult; }
+        public List<CompetitorResult> RaceResult { get; } //List of competitors and his points, rank
 
 
         public Race(List<CompetitorResult> raceResult)
         {
             this.numberOfCompetitorsInRace = raceResult.Count;
-            this.raceResult = raceResult; //predicted capacity
+            this.RaceResult = raceResult; //predicted capacity
 
-            computePointsAndRanks();     //procedure for compute points and Ranks in this race
+            ComputePointsAndRanks();     //procedure for compute points and Ranks in this race
         }
 
-        private void computePointsAndRanks()
+        private void ComputePointsAndRanks()
         {
 
             /* after each race competitors position is assigned in order they finished (1, 2, 3, ..) it can happen they finished at the same time (1, 1, 2, 3)!
@@ -35,7 +33,7 @@ namespace Sailing
             */
 
             /* Working on sorted competitors sorted by position/time finished in race */
-            raceResult.Sort();
+            RaceResult.Sort();
 
             /*Ties rules implementation*/
 
@@ -52,7 +50,7 @@ namespace Sailing
             //Working on sorted array of CompetitorResult
             //filling array of positions from data structure
             int index = 0;
-            foreach (CompetitorResult cr in raceResult)
+            foreach (CompetitorResult cr in RaceResult)
             {
                 positionArray[index] = (float)cr.PositionFinished;
                 index++;
@@ -97,7 +95,7 @@ namespace Sailing
 
             //refilling back to data structure od CompetitorResults
             index = 0;
-            foreach (CompetitorResult cr in raceResult)
+            foreach (CompetitorResult cr in RaceResult)
             {
                 cr.PointsInRace = pointsResult[index];
                 cr.RaceRank = rankArray[index];

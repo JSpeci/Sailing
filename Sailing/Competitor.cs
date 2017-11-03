@@ -4,44 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-/* Class represents one competitor in competition */ 
+/* Class represents one competitor in competition */
 namespace Sailing
 {
     class Competitor : IComparable<Competitor>
     {
-        private string name;
-        private float points;
         private List<CompetitorResult> raceResults;
 
-        public List<CompetitorResult> RaceResults { get => raceResults;  }
-        public string Name { get => name; set => name = value; }
-        public float Points { get => points; }
+        public List<CompetitorResult> RaceResults { get => raceResults; }
+        public string Name { get; set; }
+        public float NetPoints { get; set; }
+        public float TotalPoints { get; set; }
 
         public Competitor(string name)
         {
             this.raceResults = new List<CompetitorResult>();
-            this.name = name;
-            this.points = 0F;
+            this.Name = name;
         }
 
-        /* Adding points to atrribute points. In foreach can not be modified property points. */
-        public void AddPoints(float value)
-        {
-            if (value > 0)
-            {
-                this.points += value;
-            }
-            else throw new InvalidOperationException("Negative value can not be added.");
-        }
         public override string ToString()
         {
-            return "Competitor: " + name;
+            return "Competitor: " + Name;
         }
 
         /* Competitor can be compared on points, sorted competitors can be ranked in all competition - many races in competition*/
         public int CompareTo(Competitor other)
         {
-            return this.points.CompareTo(other.Points);
+            return this.NetPoints.CompareTo(other.NetPoints);
         }
+        
+        
     }
 }

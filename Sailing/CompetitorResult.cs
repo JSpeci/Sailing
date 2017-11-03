@@ -9,27 +9,26 @@ namespace Sailing
     /* CompetitorResult holds one Competitor and his position in ONE race, reference to race, and calculated rank */
     class CompetitorResult : IComparable<CompetitorResult>
     {
-        private Competitor competitor;    //copmetitor reference
-        private int positionFinished;  //position competitor finished in one race
-        private float pointsInRace;       //computed points in that race
-        private int raceRank;       //rank given - computed in one race
-
-        public int PositionFinished  { get => positionFinished; }
-        public Competitor Competitor { get => competitor; }
-        public int RaceRank { get => raceRank; set => raceRank = value; }
-        public float PointsInRace { get => pointsInRace; set => pointsInRace = value; }
+        // auto property https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties
+        // Auto-Impl Properties for trivial get and set
+        public Competitor Competitor { get; }    //copmetitor reference
+        public int PositionFinished  { get; } //position competitor finished in one race
+        public int RaceRank { get; set; } //rank given - computed in one race
+        public float PointsInRace { get; set; } //computed points in that race
+        public bool Discarded { get; set; }
 
         public CompetitorResult(Competitor competitor, int position)
         {
-            this.competitor = competitor;
-            this.positionFinished = position;
-            this.pointsInRace = 0F;
+            this.Competitor = competitor;
+            this.PositionFinished = position;
+            this.PointsInRace = 0F;
+            this.Discarded = false;
         }
 
-        /* Comparable to be sort. In sorted array can be computed points and rank in race*/
+        /* Comparable to be sort by position finished. In sorted array can be computed points and rank in race*/
         public int CompareTo(CompetitorResult other)
         {
-            return this.positionFinished.CompareTo(other.PositionFinished);
+            return this.PositionFinished.CompareTo(other.PositionFinished);
         }
     }
 }

@@ -15,11 +15,11 @@ namespace Sailing
             //directory with csv files
             string[] fileArray = Directory.GetFiles("./data1/", "*.csv");
 
-            //competitors array
-            CompetitorsLoader competitorsLoader = new CompetitorsLoader(fileArray);
+            CompetitorsLoader loader = new CompetitorsLoader();
+            loader.LoadCompetitorsRaces(fileArray);
 
             //one instance of competition
-            Competition competition = new Competition(competitorsLoader.Competitors,competitorsLoader.Races);
+            Competition competition = new Competition(loader.Competitors,loader.Races);
 
             //output
             Console.WriteLine(competition.ViewTable());
