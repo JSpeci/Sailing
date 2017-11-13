@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +8,9 @@ using System.Threading.Tasks;
 /* Class represents one competitor in competition */
 namespace Sailing
 {
-    public class Competitor : IComparable<Competitor>
+    public class Competitor : IComparable<Competitor>, IEnumerable<CompetitorResult>
     {
+
         private List<CompetitorResult> raceResults;
 
         public List<CompetitorResult> RaceResults { get => raceResults; }
@@ -41,6 +43,7 @@ namespace Sailing
             return competitor != null && this.GetHashCode() == obj.GetHashCode();
         }
 
+
         public override int GetHashCode()
         {
             var hashCode = -1926335857;
@@ -50,6 +53,16 @@ namespace Sailing
             hashCode = hashCode * -1521134295 + NetPoints.GetHashCode();
             hashCode = hashCode * -1521134295 + TotalPoints.GetHashCode();
             return hashCode;
+        }
+
+        public IEnumerator<CompetitorResult> GetEnumerator()
+        {
+            return this.raceResults.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

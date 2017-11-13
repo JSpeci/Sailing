@@ -22,14 +22,6 @@ namespace Sailing
             }
         }
 
-        public class PointsFirst : Comparer<CompetitorResult>
-        {
-            public override int Compare(CompetitorResult x, CompetitorResult y)
-            {
-                return x.PointsInRace.CompareTo(y.PointsInRace);
-            }
-        }
-
 
         private List<Competitor> competitors; //competitors list reference
         private List<Race> races;             //races in this competition
@@ -62,10 +54,11 @@ namespace Sailing
             {
                 int racesCount = c.RaceResults.Count;
 
-                c.RaceResults.Sort(new PointsFirst());
+                //IEnumerable<CompetitorResult> raceResults = c.RaceResults.OrderBy(r => r.PointsInRace);
+                IEnumerable<CompetitorResult> raceResults = Enumerable.OrderBy(c.RaceResults, (r => r.PointsInRace));
 
                 //make discards
-                foreach (CompetitorResult cr in c.RaceResults)
+                foreach (CompetitorResult cr in raceResults)
                 {
                     if (racesCount <= this.Discards)
                     {

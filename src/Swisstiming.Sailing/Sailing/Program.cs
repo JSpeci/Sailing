@@ -9,6 +9,9 @@ namespace Sailing
 {
     public class Program
     {
+
+
+
         static void Main(string[] args)
         {
 
@@ -18,6 +21,8 @@ namespace Sailing
             //output
             Console.WriteLine(CompetitionViewer.ViewTable(competition));
 
+
+            Competitor c = new Competitor("A");
 
             Console.ReadLine();
 
