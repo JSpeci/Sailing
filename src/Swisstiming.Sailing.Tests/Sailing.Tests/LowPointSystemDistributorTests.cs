@@ -8,6 +8,17 @@ namespace Sailing.Tests
     public class LowPointSystemDistributorTests
     {
         [Fact]
+        public void ShouldHavePointsAsFinished1234()
+        {
+            LowPointSystemDistributor dis = new LowPointSystemDistributor();
+            List<CompetitorResult> raceResult = GetRaceResult(1,2,3,4);
+            dis.ComputePointsAndRanks(raceResult);
+            AssertPoints(raceResult, 1, 2, 3, 4);
+            AssertRank(raceResult, 1, 2, 3, 4);
+        }
+
+
+        [Fact]
         public void ShouldHaveDistributePointsAsFinished1123()
         {
             LowPointSystemDistributor dis = new LowPointSystemDistributor();

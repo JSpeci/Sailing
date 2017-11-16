@@ -44,6 +44,7 @@ namespace Sailing
         private List<Competitor> competitors; //competitors list reference
         private List<Race> races;             //races in this competition
         private List<CompetitorsRankInCompetition> ranks;
+        private IScoreDistributor distributor;
 
         public List<CompetitorsRankInCompetition> Ranks { get => ranks; } //ranks of competitors in this competition 
         public int Discards { get; set; }   //For discards n=1 (the worst race shouldn't be taken into account). 
@@ -93,6 +94,7 @@ namespace Sailing
 
         public void ApplyRules(IScoreDistributor distributor)
         {
+            this.distributor = distributor;
             foreach (Race r in Races)
                 r.ComputePointsAndRanks(distributor);
             SumPoints();
