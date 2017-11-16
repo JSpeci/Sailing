@@ -5,24 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-/*TO DO
-    Vyrobit nastavitelny system bodovani raců tak, ze nyní je to prostý linearni low-point system
-    
-    finishing time - 1 2 3 3 4 5 
-    points ted  1 2 3 4 5 6 
-
-    nove points 10,7,5,4,3,2,1,0,0,0,0,0,0  - custom řada ze zadani
-
-    otočit sortovani - na prvnim miste v poli ranks je ten co ma nejvice bodu - pravidla pro stejny pocet bodu zustavaji
-
-    Udelat to rozsiritelne  - nastaveni bude nejaky objekt s pravidly - bude mozne pouzit obe pravidla, ale vzdy na celou Competition
-
-
-
-     
-     */
-
 namespace Sailing
 {
     public class Competition
