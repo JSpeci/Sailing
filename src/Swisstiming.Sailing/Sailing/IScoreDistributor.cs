@@ -6,7 +6,6 @@ namespace Sailing
 {
     public interface IScoreDistributor
     {
-        void ComputePoints(List<CompetitorResult> raceResult);
-        void ComputeRanks(List<CompetitorResult> raceResult);
+        void ComputePointsAndRanks(List<CompetitorResult> raceResult);
     }
 }

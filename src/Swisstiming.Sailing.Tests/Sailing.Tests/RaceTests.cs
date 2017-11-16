@@ -80,6 +80,8 @@ namespace Sailing.Tests
                 raceResult.Add(new CompetitorResult(c, positionsFinished[index++]));
             }
             Race race = new Race(raceResult);
+            
+            race.ComputePointsAndRanks(new LowPointSystemDistributor());    //I am doing tests on low point system distribution
             return race;
         }
 

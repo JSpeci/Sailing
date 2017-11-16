@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Sailing
 {
-    class LowPointSystemDistributor : IScoreDistributor
+    public class LowPointSystemDistributor : IScoreDistributor
     {
         public LowPointSystemDistributor()
         {
 
         }
 
-        public void ComputePoints(List<CompetitorResult> raceResult)
+        public void ComputePointsAndRanks(List<CompetitorResult> raceResult)
         {
             /* after each race competitors position is assigned in order they finished (1, 2, 3, ..) it can happen they finished at the same time (1, 1, 2, 3)!
             the points are assigned in the same order as position based on the pointing system, the simples point system is (1, 2, 3, 4, ...)
@@ -89,11 +89,6 @@ namespace Sailing
                 cr.RaceRank = rankArray[index];
                 index++;
             }
-        }
-
-        public void ComputeRanks(List<CompetitorResult> raceResult)
-        {
-            throw new NotImplementedException();
         }
     }
 }

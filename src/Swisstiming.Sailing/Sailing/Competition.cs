@@ -91,6 +91,11 @@ namespace Sailing
             ComputeRanks();             //procedure
         }
 
+        public void ApplyRules(IScoreDistributor distributor)
+        {
+            foreach (Race r in Races)
+                r.ComputePointsAndRanks(distributor);
+        }
 
         public void ComputeRanks()
         {

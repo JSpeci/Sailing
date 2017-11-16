@@ -69,6 +69,7 @@ namespace Sailing.Tests
             competition.Races.Add(GetRace(competition.Competitors, 1, 1, 2, 3));
             competition.Races.Add(GetRace(competition.Competitors, 1, 1, 1, 2));
             competition.Races.Add(GetRace(competition.Competitors, 1, 2, 2, 3));
+            competition.ApplyRules(new LowPointSystemDistributor());
             competition.SumPoints();
             competition.ComputeRanks();
             return competition;

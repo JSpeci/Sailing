@@ -11,23 +11,17 @@ namespace Sailing
     */
     public class Race
     {
-
-        private int numberOfCompetitorsInRace;
-
         public List<CompetitorResult> RaceResult { get; } //List of competitors and his points, rank
 
 
         public Race(List<CompetitorResult> raceResult)
         {
-            this.numberOfCompetitorsInRace = raceResult.Count;
-            this.RaceResult = raceResult; //predicted capacity
-
-            ComputePointsAndRanks(new LowPointSystemDistributor());     //procedure for compute points and Ranks in this race
+            this.RaceResult = raceResult; 
         }
 
         public void ComputePointsAndRanks(IScoreDistributor distributor)
         {
-            distributor.ComputePoints(this.RaceResult);
+            distributor.ComputePointsAndRanks(this.RaceResult);
         }
 
     }
