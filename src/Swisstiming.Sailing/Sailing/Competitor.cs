@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 /* Class represents one competitor in competition */
 namespace Sailing
 {
-    public class Competitor : IComparable<Competitor>, IEnumerable<CompetitorResult>
+    public class Competitor : IComparable<Competitor>
     {
 
         private List<CompetitorResult> raceResults;
@@ -53,16 +53,6 @@ namespace Sailing
             hashCode = hashCode * -1521134295 + NetPoints.GetHashCode();
             hashCode = hashCode * -1521134295 + TotalPoints.GetHashCode();
             return hashCode;
-        }
-
-        public IEnumerator<CompetitorResult> GetEnumerator()
-        {
-            return this.raceResults.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }
