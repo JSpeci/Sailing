@@ -81,7 +81,7 @@ namespace Sailing.Tests
             }
             Race race = new Race(raceResult);
             
-            race.ComputePointsAndRanks(new LowPointSystemDistributor());    //I am doing tests on low point system distribution
+            race.ComputePointsAndRanks(new LowPointSystemDistributor());    //I am doing tests on low point system distribution in this class
             return race;
         }
 

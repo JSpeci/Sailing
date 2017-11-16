@@ -6,10 +6,7 @@ namespace Sailing
 {
     public class LowPointSystemDistributor : IScoreDistributor
     {
-        public LowPointSystemDistributor()
-        {
-
-        }
+        public LowPointSystemDistributor() { }
 
         public void ComputePointsAndRanks(List<CompetitorResult> raceResult)
         {
@@ -30,7 +27,7 @@ namespace Sailing
              * they have the same rank but the next rank is left out (points: 1.5, 1.5, 3, 4, rank: 1, 1, 3, 4) */
 
             /*Computed on temporary float arrays */
-            float[] positionArray = new float[raceResult.Count];    //array of positions from csv as competitors finished
+            int[] positionArray = new int[raceResult.Count];    //array of positions from csv as competitors finished
             float[] pointsResult = new float[raceResult.Count];     //computed points
             int[] rankArray = new int[raceResult.Count];            //computed rank in one race
 
@@ -39,7 +36,7 @@ namespace Sailing
             int index = 0;
             foreach (CompetitorResult cr in raceResult)
             {
-                positionArray[index] = (float)cr.PositionFinished;
+                positionArray[index] = cr.PositionFinished;
                 index++;
             }
 

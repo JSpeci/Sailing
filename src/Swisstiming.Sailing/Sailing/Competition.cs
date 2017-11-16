@@ -95,9 +95,11 @@ namespace Sailing
         {
             foreach (Race r in Races)
                 r.ComputePointsAndRanks(distributor);
+            SumPoints();
+            ComputeRanks();
         }
 
-        public void ComputeRanks()
+        private void ComputeRanks()
         {
 
             competitors.Sort(); //competitors sorted by points
@@ -152,7 +154,7 @@ namespace Sailing
           Sum of all points from myRaces
           Discard-omit the n last races
          */
-        public void SumPoints()
+        private void SumPoints()
         {
             // Discards !! n = 1
 
