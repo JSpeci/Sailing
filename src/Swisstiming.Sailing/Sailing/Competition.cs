@@ -28,11 +28,12 @@ namespace Sailing
         private List<CompetitorsRankInCompetition> ranks;
         private IScoreDistributor distributor;
 
-        public List<CompetitorsRankInCompetition> Ranks { get => ranks; } //ranks of competitors in this competition 
+        public List<CompetitorsRankInCompetition> Ranks { get; } //ranks of competitors in this competition 
         public int Discards { get; set; }   //For discards n=1 (the worst race shouldn't be taken into account). 
 
-        public List<Competitor> Competitors { get => competitors; set => competitors = value; }
-        public List<Race> Races { get => races; set => races = value; }
+        public List<Competitor> Competitors { get; set; }
+        public List<Race> Races { get; set; }
+        public IScoreDistributor Distributor { get; set; }
 
         public Competition(List<Competitor> competitors, List<Race> races)
         {

@@ -20,13 +20,43 @@ namespace Sailing.Tests
         */
 
         [Fact]
+        public void ShouldHavePointsAsFinished11234()
+        {
+            IScoreDistributor dis = new CustomPointSystemDistributor();
+            List<CompetitorResult> raceResult = GetRaceResult(1, 1, 2, 3, 4);
+            dis.ComputePointsAndRanks(raceResult);
+            AssertPoints(raceResult, 8.5F, 8.5F,5, 4,3);
+            AssertRank(raceResult, 1, 1, 3, 4, 5);
+        }
+
+        [Fact]
         public void ShouldHavePointsAsFinished1234()
         {
             IScoreDistributor dis = new CustomPointSystemDistributor();
             List<CompetitorResult> raceResult = GetRaceResult(1, 2, 3, 4);
             dis.ComputePointsAndRanks(raceResult);
-            AssertPoints(raceResult, 1, 2, 3, 4);
+            AssertPoints(raceResult, 10, 7, 5, 4);
             AssertRank(raceResult, 1, 2, 3, 4);
+        }   
+
+        [Fact]
+        public void ShouldHavePointsAsFinished12234()
+        {
+            IScoreDistributor dis = new CustomPointSystemDistributor();
+            List<CompetitorResult> raceResult = GetRaceResult(1,2,2,3,4);
+            dis.ComputePointsAndRanks(raceResult);
+            AssertPoints(raceResult, 10,6,6,4,3);
+            AssertRank(raceResult,1,2,2,4,5);
+        }
+
+        [Fact]
+        public void ShouldHavePointsAsFinished1()
+        {
+            IScoreDistributor dis = new CustomPointSystemDistributor();
+            List<CompetitorResult> raceResult = GetRaceResult(1,1,1,2,3,4,5,5,6,7,8);
+            dis.ComputePointsAndRanks(raceResult);
+            AssertPoints(raceResult, 22/3F,22/3F,22/3F,4,3,2,0.5F,0.5F,0,0,0);
+            AssertRank(raceResult, 1,1,1,4,5,6,7,7,9,10,11);
         }
 
         private List<CompetitorResult> GetRaceResult(params int[] positionFinished)

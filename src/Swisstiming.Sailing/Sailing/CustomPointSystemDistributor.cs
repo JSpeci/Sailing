@@ -39,19 +39,22 @@ namespace Sailing
                 index++;
             }
 
+            //first filled manually
             float points = (float)CustomScoringScale(1);
-            pointsResult[0] = points;   //first filled manually
+            pointsResult[0] = points;  
             
-            int countOfSame = 1;
+            int countOfSame = 1;    //counter of same position in race
 
+            //first filled manually
             int rank = 1;
-            rankArray[0] = rank;           //first filled manually
+            rankArray[0] = 1;
+            rank++;            
 
             for (int x = 1; x < positionArray.Length; x++)
             {
                 if (positionArray[x - 1] == positionArray[x])
                 {
-                    points += CustomScoringScale(positionArray[x]);
+                    points += CustomScoringScale(x+1);
                     rankArray[x] = rank - countOfSame;
                     countOfSame++;
 
@@ -59,7 +62,7 @@ namespace Sailing
                 else
                 {
                     countOfSame = 1;
-                    points = CustomScoringScale(positionArray[x]);
+                    points = CustomScoringScale(x+1); //x is indexing value of array, BUT parameter of method is order
                     rankArray[x] = rank;
                 }
                 //if I had many same values, back going for recompute points divided by count of same
@@ -92,7 +95,7 @@ namespace Sailing
         {
             if(positionFinished >= 1 && positionFinished <= 7)  // 7 positions in scoring scale
             {
-                return scoringScale[positionFinished + 1];
+                return scoringScale[positionFinished - 1];
             }
             else
             {
