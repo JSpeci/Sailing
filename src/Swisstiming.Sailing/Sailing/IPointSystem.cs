@@ -7,5 +7,6 @@ namespace Sailing
     public interface IPointSystem
     {
         int GetPointsFromPosition(int positionFinished);
+        bool DescendingPoints();
     }
 }

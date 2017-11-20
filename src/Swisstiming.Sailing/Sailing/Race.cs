@@ -19,10 +19,5 @@ namespace Sailing
             this.RaceResult = raceResult; 
         }
 
-        public void ComputePointsAndRanks(IPointSystem pointSystem)
-        {
-            PointSystemDistributor.ComputePointsAndRanks(this.RaceResult, pointSystem);
-        }
-
     }
 }

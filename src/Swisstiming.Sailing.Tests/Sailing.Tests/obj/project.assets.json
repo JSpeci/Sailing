@@ -5822,6 +5822,7 @@
     ".NETCoreApp,Version=v2.0": [
       "Microsoft.NET.Test.Sdk >= 15.3.0-preview-20170628-02",
       "Microsoft.NETCore.App >= 2.0.0",
+      "Moq >= 4.7.145",
       "Sailing >= 1.0.0",
       "xunit >= 2.2.0",
       "xunit.runner.visualstudio >= 2.2.0"
@@ -5878,6 +5879,10 @@
           "xunit.runner.visualstudio": {
             "target": "Package",
             "version": "2.2.0"
+          },
+          "Moq": {
+            "target": "Package",
+            "version": "4.7.145"
           },
           "Microsoft.NETCore.App": {
             "target": "Package",

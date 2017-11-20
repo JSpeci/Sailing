@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
 namespace Sailing.Tests
 {
-    public class PointSystemDistributorTests
+    public class RaceRulesTests
     {
         /* 
             after each race competitors position is assigned in order they finished (1, 2, 3, ..) it can happen they finished at the same time (1, 1, 2, 3)! 
@@ -20,19 +21,44 @@ namespace Sailing.Tests
              the rank is assigned based on points if some of the competitors has the same number of points,
              they have the same rank but the next rank is left out (points: 1.5, 1.5, 3, 4, rank: 1, 1, 3, 4)
         */
-        [Fact]
-        public void ShouldHavePointsAsFinished11234()
-        {
-            List<CompetitorResult> raceResult = GetRaceResult(1, 1, 2, 3, 4);
-            PointSystemDistributor.ComputePointsAndRanks(raceResult, new CustomPointSystem());
-            AssertPoints(raceResult, 8.5F, 8.5F, 5, 4, 3);
-            AssertRank(raceResult, 1, 1, 3, 4, 5);
 
-            PointSystemDistributor.ComputePointsAndRanks(raceResult, new LowPointSystem());
-            AssertPoints(raceResult, 1.5F, 1.5F, 3, 4, 5);
-            AssertRank(raceResult, 1, 1, 3, 4, 5);
+        [Fact]
+        public void Should_Have_Points_As_Finished_112()
+        {
+            var pointSystem = new Mock<IPointSystem>();
+            pointSystem.Setup(i => i.GetPointsFromPosition(1)).Returns(10);
+            pointSystem.Setup(i => i.GetPointsFromPosition(2)).Returns(7);
+            pointSystem.Setup(i => i.GetPointsFromPosition(3)).Returns(5);
+            Race race = new Race(GetRaceResult(1, 1, 2));
+            RaceRules.ComputePointsAndRanks(race, pointSystem.Object);
+            AssertPoints(race, 8.5F, 8.5F, 5);
+            AssertRank(race, 1, 1, 3);
+
+            pointSystem.VerifyAll();
         }
 
+       
+
+        [Fact]
+        public void Should_Have_Points_As_Finished_1112()
+        {
+            var pointSystem = new Mock<IPointSystem>();
+            pointSystem.Setup(i => i.GetPointsFromPosition(1)).Returns(50);
+            pointSystem.Setup(i => i.GetPointsFromPosition(2)).Returns(40);
+            pointSystem.Setup(i => i.GetPointsFromPosition(3)).Returns(30);
+            pointSystem.Setup(i => i.GetPointsFromPosition(4)).Returns(20);
+
+            Race race = new Race(GetRaceResult(1, 1, 1, 2));
+            RaceRules.ComputePointsAndRanks(race, pointSystem.Object);
+            AssertPoints(race, 40 , 40 , 40 , 20);
+            AssertRank(race, 1, 1, 1, 4);
+
+            pointSystem.VerifyAll();
+        }
+
+        /*
+        
+            
         [Fact]
         public void ShouldHavePointsAsFinished1234()
         {
@@ -46,7 +72,7 @@ namespace Sailing.Tests
             AssertRank(raceResult, 1, 2, 3, 4);
         }
 
-        [Fact]
+             [Fact]
         public void ShouldHavePointsAsFinished12234()
         {
             List<CompetitorResult> raceResult = GetRaceResult(1, 2, 2, 3, 4);
@@ -58,19 +84,8 @@ namespace Sailing.Tests
             AssertPoints(raceResult, 1, 2.5F, 2.5F, 4, 5);
             AssertRank(raceResult, 1, 2, 2, 4, 5);
         }
-
-        [Fact]
-        public void ShouldHavePointsAsFinished1()
-        {
-            List<CompetitorResult> raceResult = GetRaceResult(1, 1, 1, 2, 3, 4, 5, 5, 6, 7, 8);
-            PointSystemDistributor.ComputePointsAndRanks(raceResult, new CustomPointSystem());
-            AssertPoints(raceResult, 22 / 3F, 22 / 3F, 22 / 3F, 4, 3, 2, 0.5F, 0.5F, 0, 0, 0);
-            AssertRank(raceResult, 1, 1, 1, 4, 5, 6, 7, 7, 9, 10, 11);
-
-            PointSystemDistributor.ComputePointsAndRanks(raceResult, new LowPointSystem());
-            AssertPoints(raceResult, 2, 2, 2, 4, 5, 6, 7.5F, 7.5F, 9, 10, 11);
-            AssertRank(raceResult, 1, 1, 1, 4, 5, 6, 7, 7, 9, 10, 11);
-        }
+            
+        */
 
         private List<CompetitorResult> GetRaceResult(params int[] positionFinished)
         {
@@ -84,19 +99,19 @@ namespace Sailing.Tests
             return raceResult;
         }
 
-        private void AssertPoints(List<CompetitorResult> raceResult, params float[] expectedPoints)
+        private void AssertPoints(Race race, params float[] expectedPoints)
         {
             int index = 0;
-            foreach (CompetitorResult cr in raceResult)
+            foreach (CompetitorResult cr in race.RaceResult)
             {
                 Assert.Equal(cr.PointsInRace, expectedPoints[index++]);
             }
         }
 
-        private void AssertRank(List<CompetitorResult> raceResult, params int[] expectedRank)
+        private void AssertRank(Race race, params int[] expectedRank)
         {
             int index = 0;
-            foreach (CompetitorResult cr in raceResult)
+            foreach (CompetitorResult cr in race.RaceResult)
             {
                 Assert.Equal(cr.RaceRank, expectedRank[index++]);
             }

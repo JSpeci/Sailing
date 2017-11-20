@@ -13,6 +13,11 @@ namespace Sailing
     {
         private readonly int[] scoringScale = { 10, 7, 5, 4, 3, 2, 1 };
 
+        public bool DescendingPoints()
+        {
+            return true;
+        }
+
         /* 10,7,5,4,3,2,1,0,0,0,0,0,0,0 */
         public int GetPointsFromPosition(int positionFinished)
         {

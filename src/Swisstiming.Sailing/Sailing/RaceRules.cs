@@ -4,10 +4,11 @@ using System.Text;
 
 namespace Sailing
 {
-    public class PointSystemDistributor
+    public class RaceRules
     {
-        public static void ComputePointsAndRanks(List<CompetitorResult> raceResult, IPointSystem pointSystem)
+        public static void ComputePointsAndRanks(Race race, IPointSystem pointSystem)
         {
+            List<CompetitorResult> raceResult = race.RaceResult;
             /*Computed on temporary float arrays */
             int[] positionArray = new int[raceResult.Count];         //array of positions from csv as competitors finished
             float[] pointsResult = new float[raceResult.Count];      //computed points

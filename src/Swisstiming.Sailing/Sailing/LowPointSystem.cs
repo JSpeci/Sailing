@@ -11,6 +11,11 @@ namespace Sailing
     */
     public class LowPointSystem : IPointSystem
     {
+        public bool DescendingPoints()
+        {
+            return false;
+        }
+
         public int GetPointsFromPosition(int positionFinished)
         {
             if (positionFinished > 0)

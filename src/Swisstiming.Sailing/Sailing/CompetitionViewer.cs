@@ -22,7 +22,7 @@ namespace Sailing
             sb.Append("\n");
 
             //Table content
-            foreach (Competition.CompetitorsRankInCompetition cRank in competition.Ranks)
+            foreach (CompetitorsRankInCompetition cRank in competition.Ranks)
             {
                 sb.Append(String.Format("{0,8}{1,8}", cRank.competitor.Name, cRank.rankInCompetition.ToString()));
                 foreach (Race r in competition.Races)
