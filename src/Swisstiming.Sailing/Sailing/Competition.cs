@@ -54,15 +54,32 @@ namespace Sailing
             }
             this.Discards = discards;
 
+            // prepared for new discards
+            foreach(Competitor c in competitors)
+            {
+                foreach(CompetitorResult cr in c.RaceResults)
+                {
+                    cr.Discarded = false;
+                }
+            }
+
             foreach (Competitor c in competitors)
             {
                 int racesCount = c.RaceResults.Count;
 
-                //IEnumerable<CompetitorResult> raceResults = c.RaceResults.OrderBy(r => r.PointsInRace);
-                IEnumerable<CompetitorResult> raceResults = Enumerable.OrderBy(c.RaceResults, (r => r.PointsInRace));
+                IEnumerable<CompetitorResult> sortedResults;
+
+                if (PointSystem is CustomPointSystem)
+                {
+                    sortedResults = c.RaceResults.OrderByDescending(r => r.PointsInRace);
+                }
+                else
+                {
+                    sortedResults = c.RaceResults.OrderBy(r => r.PointsInRace);
+                }
 
                 //make discards
-                foreach (CompetitorResult cr in raceResults)
+                foreach (CompetitorResult cr in sortedResults)
                 {
                     if (racesCount <= this.Discards)
                     {

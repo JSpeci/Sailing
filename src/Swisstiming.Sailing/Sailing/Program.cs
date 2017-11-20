@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Moq;
 
 namespace Sailing
 {
@@ -17,7 +18,8 @@ namespace Sailing
 
             //one instance of competition
             Competition competition = CompetitorsLoader.LoadCompetitorsFromDirectoryPath("./data1/");
-
+            //competition.ApplyRules(new CustomPointSystem());
+            competition.ApplyDiscards(2);
             //output
             Console.WriteLine(CompetitionViewer.ViewTable(competition));
 
