@@ -30,9 +30,10 @@ namespace Sailing
         public List<CompetitorsRankInCompetition> Ranks { get => ranks; } //ranks of competitors in this competition 
         public int Discards { get; set; }   //For discards n=1 (the worst race shouldn't be taken into account). 
 
-        public IScoreDistributor Distributor { get; set; }
         public List<Race> Races { get => races; set => races = value; }
         public List<Competitor> Competitors { get => competitors; set => competitors = value; }
+
+        public IPointSystem PointSystem { get; set; }
 
         public Competition(List<Competitor> competitors, List<Race> races)
         {
@@ -40,10 +41,8 @@ namespace Sailing
             this.races = races;
             this.Discards = 1;
 
-            //deafult distributor
-            this.Distributor = new LowPointSystemDistributor();
-
-            ApplyRules(this.Distributor);
+            //deafult pointSystem
+            ApplyRules(new LowPointSystem());
             ApplyDiscards(Discards);
         }
 
@@ -78,11 +77,11 @@ namespace Sailing
             ComputeRanks();             //procedure
         }
 
-        public void ApplyRules(IScoreDistributor distributor)
+        public void ApplyRules(IPointSystem pointSystem)
         {
-            this.Distributor = distributor;
+            this.PointSystem = pointSystem;
             foreach (Race r in Races)
-                r.ComputePointsAndRanks(distributor);
+                r.ComputePointsAndRanks(pointSystem);
 
             //recompute after apllied rules
             SumPoints();
@@ -93,7 +92,7 @@ namespace Sailing
         {
             IEnumerable<Competitor> sortedCompetitors;
 
-            if (Distributor is CustomPointSystemDistributor)
+            if (PointSystem is CustomPointSystem)
             {
                 sortedCompetitors = competitors.OrderByDescending(p => p.NetPoints);
             }
