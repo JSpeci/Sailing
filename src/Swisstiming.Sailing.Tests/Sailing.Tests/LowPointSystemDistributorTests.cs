@@ -16,7 +16,7 @@ namespace Sailing.Tests
         [Fact]
         public void ShouldHavePointsAsFinished1234()
         {
-            LowPointSystemDistributor dis = new LowPointSystemDistributor();
+            IScoreDistributor dis = new LowPointSystemDistributor();
             List<CompetitorResult> raceResult = GetRaceResult(1, 2, 3, 4);
             dis.ComputePointsAndRanks(raceResult);
             AssertPoints(raceResult, 1, 2, 3, 4);
@@ -40,7 +40,7 @@ namespace Sailing.Tests
         [Fact]
         public void ShouldHaveDistributePointsAsFinished1123()
         {
-            LowPointSystemDistributor dis = new LowPointSystemDistributor();
+            IScoreDistributor dis = new LowPointSystemDistributor();
             List<CompetitorResult> raceResult = GetRaceResult(1, 1, 2, 3);
             dis.ComputePointsAndRanks(raceResult);
             AssertPoints(raceResult, 1.5F, 1.5F, 3, 4);
@@ -50,7 +50,7 @@ namespace Sailing.Tests
         [Fact]
         public void ShouldHaveDividedPointsAsFinished1223()
         {
-            LowPointSystemDistributor dis = new LowPointSystemDistributor();
+            IScoreDistributor dis = new LowPointSystemDistributor();
             List<CompetitorResult> raceResult = GetRaceResult(1, 2, 2, 3);
             dis.ComputePointsAndRanks(raceResult);
             AssertPoints(raceResult, 1, 2.5F, 2.5F, 4);
@@ -60,7 +60,7 @@ namespace Sailing.Tests
         [Fact]
         public void ShouldHaveDividedPointsAsFinished1112()
         {
-            LowPointSystemDistributor dis = new LowPointSystemDistributor();
+            IScoreDistributor dis = new LowPointSystemDistributor();
             List<CompetitorResult> raceResult = GetRaceResult(1, 1, 1, 2);
             dis.ComputePointsAndRanks(raceResult);
             AssertPoints(raceResult, 2, 2, 2, 4);

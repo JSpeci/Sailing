@@ -22,7 +22,7 @@ namespace Sailing.Tests
         [Fact]
         public void ShouldHavePointsAsFinished1234()
         {
-            LowPointSystemDistributor dis = new LowPointSystemDistributor();
+            IScoreDistributor dis = new CustomPointSystemDistributor();
             List<CompetitorResult> raceResult = GetRaceResult(1, 2, 3, 4);
             dis.ComputePointsAndRanks(raceResult);
             AssertPoints(raceResult, 1, 2, 3, 4);

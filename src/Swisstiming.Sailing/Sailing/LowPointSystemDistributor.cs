@@ -17,8 +17,6 @@ namespace Sailing
 
             /* Working on sorted competitors sorted by position/time finished in race */
             raceResult.Sort();
-
-            Console.WriteLine();
             /* Ties rules implementation*/
 
             /* if some of the competitors finished on the same position the points are splitted between them*/
