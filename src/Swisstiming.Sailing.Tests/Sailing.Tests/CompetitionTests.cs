@@ -9,28 +9,46 @@ namespace Sailing.Tests
     {
 
         [Fact]
-        public void SummedTotalPointsTest()
+        public void SumTotalPointsTest()
         {
             Competition competition = GetCompetition();
             //same as ApplyDiscards(0);
+            competition.ApplyRules(new LowPointSystemDistributor());
             AssertTotalPoints(competition, 4.5F, 6F, 7.5F, 12F);
             AssertRanks(competition, 1, 2, 3, 4);
+
+            competition.ApplyRules(new CustomPointSystemDistributor());
+            AssertTotalPoints(competition, 8.5F+22/3F+10F, 8.5F+22/3F+6F, 5F+22/3F+6F, 12F);
+            AssertRanks(competition, 1, 2, 3, 4);
+
         }
         [Fact]
-        public void SummedNetPointsDiscard1()
+        public void SumNetPointsDiscard1()
         {
             Competition competition = GetCompetition();
+            competition.ApplyRules(new LowPointSystemDistributor());
             competition.ApplyDiscards(1);
             AssertNetPoints(competition, 2.5F, 3.5F, 4.5F, 8F);
             AssertRanks(competition, 1, 2, 3, 4);
+
+            competition.ApplyRules(new CustomPointSystemDistributor());
+            AssertNetPoints(competition, 8.5F + 10F, 8.5F + 22 / 3F, 22 / 3F + 6F, 4F + 4F);
+            AssertRanks(competition, 1, 2, 3, 4);
         }
         [Fact]
-        public void SummedNetPointsDiscard2() //Summary with 2 discarded races
+        public void SumNetPointsDiscard2() //Summary with 2 discarded races
         {
             Competition competition = GetCompetition();
+            competition.ApplyRules(new LowPointSystemDistributor());
             competition.ApplyDiscards(2);
             AssertNetPoints(competition, 1F, 1.5F, 2F, 4F);
             AssertRanks(competition, 1, 2, 3, 4);
+
+            competition.ApplyRules(new CustomPointSystemDistributor());
+            AssertNetPoints(competition, 10F, 8.5F, 22 / 3F, 4F);
+            AssertRanks(competition, 1, 2, 3, 4);
+
+
         }
 
         private void AssertRanks(Competition competition, params int[] expectedRanks)
@@ -69,7 +87,6 @@ namespace Sailing.Tests
             competition.Races.Add(GetRace(competition.Competitors, 1, 1, 2, 3));
             competition.Races.Add(GetRace(competition.Competitors, 1, 1, 1, 2));
             competition.Races.Add(GetRace(competition.Competitors, 1, 2, 2, 3));
-            competition.ApplyRules(new LowPointSystemDistributor());
             return competition;
         }
 

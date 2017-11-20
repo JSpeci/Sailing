@@ -22,8 +22,6 @@ namespace Sailing
             Console.WriteLine(CompetitionViewer.ViewTable(competition));
 
 
-            Competitor c = new Competitor("A");
-
             Console.ReadLine();
 
         }

@@ -26,14 +26,13 @@ namespace Sailing
         private List<Competitor> competitors; //competitors list reference
         private List<Race> races;             //races in this competition
         private List<CompetitorsRankInCompetition> ranks;
-        private IScoreDistributor distributor;
 
-        public List<CompetitorsRankInCompetition> Ranks { get; } //ranks of competitors in this competition 
+        public List<CompetitorsRankInCompetition> Ranks { get => ranks; } //ranks of competitors in this competition 
         public int Discards { get; set; }   //For discards n=1 (the worst race shouldn't be taken into account). 
 
-        public List<Competitor> Competitors { get; set; }
-        public List<Race> Races { get; set; }
         public IScoreDistributor Distributor { get; set; }
+        public List<Race> Races { get => races; set => races = value; }
+        public List<Competitor> Competitors { get => competitors; set => competitors = value; }
 
         public Competition(List<Competitor> competitors, List<Race> races)
         {
@@ -41,6 +40,10 @@ namespace Sailing
             this.races = races;
             this.Discards = 1;
 
+            //deafult distributor
+            this.Distributor = new LowPointSystemDistributor();
+
+            ApplyRules(this.Distributor);
             ApplyDiscards(Discards);
         }
 
@@ -70,24 +73,34 @@ namespace Sailing
                 }
             }
 
-
+            //recompute after discards
             SumPoints();                //procedure
             ComputeRanks();             //procedure
         }
 
         public void ApplyRules(IScoreDistributor distributor)
         {
-            this.distributor = distributor;
+            this.Distributor = distributor;
             foreach (Race r in Races)
                 r.ComputePointsAndRanks(distributor);
+
+            //recompute after apllied rules
             SumPoints();
             ComputeRanks();
         }
 
         private void ComputeRanks()
         {
+            IEnumerable<Competitor> sortedCompetitors;
 
-            competitors.Sort(); //competitors sorted by points
+            if (Distributor is CustomPointSystemDistributor)
+            {
+                sortedCompetitors = competitors.OrderByDescending(p => p.NetPoints);
+            }
+            else
+            {
+                sortedCompetitors = competitors.OrderBy(p => p.NetPoints);
+            }
 
             this.ranks = new List<CompetitorsRankInCompetition>(competitors.Count);
 
@@ -95,7 +108,7 @@ namespace Sailing
             int[] rankArray = new int[competitors.Count];
             float[] pointsArray = new float[competitors.Count];
             int index = 0;
-            foreach (Competitor c in competitors)
+            foreach (Competitor c in sortedCompetitors)
             {
                 pointsArray[index] = c.NetPoints;
                 index++;
@@ -124,7 +137,7 @@ namespace Sailing
 
             /*Refilling data structures from temporary arrays*/
             index = 0;
-            foreach (Competitor c in competitors)
+            foreach (Competitor c in sortedCompetitors)
             {
                 Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
                 index++;
