@@ -1,6 +1,7 @@
 ﻿using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -9,7 +10,21 @@ namespace Sailing.Tests
     public class CompetitionRulesTests
     {
 
+        /*
+            Implementace Tie - dělá se podle ranků, 
 
+            R1 R2  R3 R4 součet
+        C1                  5
+        C2                  6        
+        C3                  6
+        pokud mají stejně - podívám se na jejich nejlepší závod, a vyberu toho, čí nejlepší závod byl lepší -
+        pokud mají oba svůj nejlepší závod stejný, podívám se, který z nich byl dřív v competition
+
+            2 3 4 2
+            2 1 2 7
+
+
+        */
         [Fact]
         public void Should_apply_discards()
         {
@@ -32,7 +47,7 @@ namespace Sailing.Tests
         }
 
         [Fact]
-        public void Should_compute_ranks_1234()
+        public void Should_compute_ranks_123()
         {
             List<Competitor> competitors = new List<Competitor>();
             Competitor c;
@@ -53,7 +68,7 @@ namespace Sailing.Tests
         }
 
         [Fact]
-        public void Should_compute_ranks_1224()
+        public void Should_compute_ranks_122()
         {
             List<Competitor> competitors = new List<Competitor>();
             Competitor c;
@@ -74,83 +89,62 @@ namespace Sailing.Tests
         }
 
         [Fact]
-        public void Should_sum_points()
-        {
-            List<Competitor> competitors = new List<Competitor>();
-            Competitor c;
-            CompetitorResult cr;
-
-            for(int x = 0; x < 4; x++)
-            {
-                c = new Competitor(x.ToString());
-                cr = new CompetitorResult(c, 1);
-                cr.PointsInRace = 11;
-                c.RaceResults.Add(cr);
-                competitors.Add(c);
-            }
-
-            CompetitionRules.SumPoints(competitors);
-
-            AssertTotalPoints(competitors, 11, 11, 11, 11);
-            AssertNetPoints(competitors, 11,11,11,11);
-        }
-
-        /*
-        [Fact]
-        public void Should_have_applied_race_rules()
+        public void Should_sum_points()     //sum of total points and sum of net points when 1 discarded
         {
             List<Competitor> competitors = GetCompetitors(4);
-            List<Race> races = new List<Race>();
-            races.Add(GetRace(competitors, 1, 1, 2, 3));
-            races.Add(GetRace(competitors, 1, 1, 1, 2));
-            races.Add(GetRace(competitors, 1, 2, 2, 3));
+            CompetitionRules.SumPoints(competitors);
+            //total points 
+            //11+22+33+44 = 110
+            //22+44+66+88 = 220
+            //33+66+99+132 = 330
+            //44+88+132+176 = 440
+            AssertTotalPoints(competitors, 110, 220, 330, 440); 
+            AssertNetPoints(competitors, 110, 220, 330, 440); // 0 discarded
 
-            var pointSystem = new Mock<IPointSystem>();
-            pointSystem.Setup(i => i.GetPointsFromPosition(1)).Returns(10);
-            pointSystem.Setup(i => i.GetPointsFromPosition(2)).Returns(7);
-            pointSystem.Setup(i => i.GetPointsFromPosition(3)).Returns(5);
-            pointSystem.Setup(i => i.GetPointsFromPosition(4)).Returns(4);
-
-            CompetitionRules.ApplyRaceRules(races, pointSystem.Object);
+            CompetitionRules.ApplyDiscards(competitors, 1);// 1 discarded
+            CompetitionRules.SumPoints(competitors);
+            //net points 
+            //11+22+33 = 66
+            //22+44+66 = 132
+            //33+66+99 = 198
+            //44+88+132 = 264
+            AssertNetPoints(competitors, 66, 132, 198, 264); // 1 discarded
         }
-      
-                [Fact]
-                public void SumTotalPointsTest()
+
+        private List<Competitor> GetCompetitors(int numOfCompetitors)
+        {
+            List<Competitor> competitors = new List<Competitor>();
+            for(int x=1; x <= numOfCompetitors; x++)
+            {
+                competitors.Add(new Competitor(x.ToString()));
+            }
+            getRaceResults(competitors, 4);
+            return competitors;
+        }
+
+        private void getRaceResults(List<Competitor> competitors, int numOfRaceResults)     //inserting raceResults into competitors
+        {
+            CompetitorResult cr;
+            int index = 1;
+            foreach(Competitor c in competitors)
+            {
+                for(int x = 1; x <= numOfRaceResults; x++)
                 {
-                    Competition competition = GetCompetition();
-                    CompetitionRules.ApplyRules(competition, new CustomPointSystem());
-                    AssertTotalPoints(competition, 8.5F+22/3F+10F, 8.5F+22/3F+6F, 5F+22/3F+6F, 12F);
-                    AssertRanks(competition, 1, 2, 3, 4);
-
+                    cr = new CompetitorResult(c, x);
+                    cr.PointsInRace = index * x * 11; 
+                    cr.RaceRank = x;
+                    c.RaceResults.Add(cr);
                 }
-                [Fact]
-                public void SumNetPointsDiscard1()
-                {
-                    Competition competition = GetCompetition();
-                    competition.Discards = 1;
-                    CompetitionRules.ApplyRules(competition, new LowPointSystem());
-                    AssertNetPoints(competition, 2.5F, 3.5F, 4.5F, 8F);
-                    AssertRanks(competition, 1, 2, 3, 4);
+                index++;
+                //11+22+33+44 = 110
+                //22+44+66+88 = 220
+                //33+66+99+132 = 330
+                //44+88+132+176 = 440
+            }
+        }
 
-                    CompetitionRules.ApplyRules(competition,new CustomPointSystem());
-                    AssertNetPoints(competition, 8.5F + 10F, 8.5F + 22 / 3F, 22 / 3F + 6F, 4F + 4F);
-                    AssertRanks(competition, 1, 2, 3, 4);
-                }
-                [Fact]
-                public void SumNetPointsDiscard2() //Summary with 2 discarded races
-                {
-                    Competition competition = GetCompetition();
-                    competition.Discards = 2;
-                    CompetitionRules.ApplyRules(competition, new LowPointSystem());
-                    AssertNetPoints(competition, 1F, 1.5F, 2F, 4F);
-                    AssertRanks(competition, 1, 2, 3, 4);
+        //assert methods
 
-                    CompetitionRules.ApplyRules(competition, new CustomPointSystem());
-                    AssertNetPoints(competition, 10F, 8.5F, 22 / 3F, 4F);
-                    AssertRanks(competition, 1, 2, 3, 4);
-
-                }
-                */
         private void AssertRanks(List<CompetitorsRankInCompetition> ranks, params int[] expectedRanks)
         {
             int index = 0;
@@ -178,47 +172,6 @@ namespace Sailing.Tests
             }
         }
 
-        private Competition GetCompetition()
-        {
-
-            List<Competitor> competitors = GetCompetitors(4);  // 4 testing competitors
-            List<Race> races = new List<Race>();
-            Competition competition = new Competition(competitors, races);
-            competition.Races.Add(GetRace(competition.Competitors, 1, 1, 2, 3));
-            competition.Races.Add(GetRace(competition.Competitors, 1, 1, 1, 2));
-            competition.Races.Add(GetRace(competition.Competitors, 1, 2, 2, 3));
-            return competition;
-        }
-
-        private Race GetRace(List<Competitor> competitors, params int[] positionsFinished)
-        {
-            List<CompetitorResult> raceResult = new List<CompetitorResult>();
-
-            int index = 0;
-            foreach (Competitor competitor in competitors)
-            {
-                CompetitorResult cr = new CompetitorResult(competitor, positionsFinished[index++]);
-                raceResult.Add(cr);
-                competitor.RaceResults.Add(cr);
-                competitor.RaceResults.Sort();
-            }
-
-            Race race = new Race(raceResult);
-            return race;
-        }
-        
-        /*
-         Names of competitors 111,222,333  XXX
-         */
-        private List<Competitor> GetCompetitors(int numOfCompetitors)
-        {
-            List<Competitor> competitors = new List<Competitor>();
-            for (int x = 0; x < numOfCompetitors; x++)
-            {
-                competitors.Add(new Competitor(x + "" + x + "" + x));
-            }
-            return competitors;
-        }
 
     }
 }

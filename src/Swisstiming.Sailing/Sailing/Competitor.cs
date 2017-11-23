@@ -11,16 +11,14 @@ namespace Sailing
     public class Competitor : IComparable<Competitor>
     {
 
-        private List<CompetitorResult> raceResults;
-
-        public List<CompetitorResult> RaceResults { get => raceResults; }
+        public List<CompetitorResult> RaceResults { get; private set; }
         public string Name { get; set; }
         public float NetPoints { get; set; }
         public float TotalPoints { get; set; }
 
         public Competitor(string name)
         {
-            this.raceResults = new List<CompetitorResult>();
+            RaceResults = new List<CompetitorResult>();
             this.Name = name;
         }
 
@@ -47,7 +45,7 @@ namespace Sailing
         public override int GetHashCode()
         {
             var hashCode = -1926335857;
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<CompetitorResult>>.Default.GetHashCode(raceResults);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<CompetitorResult>>.Default.GetHashCode(RaceResults);
             hashCode = hashCode * -1521134295 + EqualityComparer<List<CompetitorResult>>.Default.GetHashCode(RaceResults);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             hashCode = hashCode * -1521134295 + NetPoints.GetHashCode();
