@@ -7,36 +7,32 @@ namespace Sailing
 {
     public class CompetitionRules
     {
-        /*
-         Predelat metody na public abych mohl testovat jednotlive a predem si data pripravit. 
-         Parametry metod budou jen ty, ktere pouzivam, bool pro descending a pak testy.
 
-             */
         public static void ApplyRules(Competition competition, IPointSystem pointSystem)
         {
             //deafult pointSystem
-            ApplyRaceRules(competition, pointSystem);
-            ApplyDiscards(competition);
-            SumPoints(competition);                
-            ComputeRanks(competition);             
+            competition.PointSystem = pointSystem;
+            ApplyRaceRules(competition.Races, pointSystem);
+            ApplyDiscards(competition.Competitors, competition.Discards);
+            SumPoints(competition.Competitors);
+            competition.Ranks = ComputeRanks(competition.Competitors, pointSystem.DescendingPoints());
         }
 
-        private static void ApplyRaceRules(Competition competition, IPointSystem pointSystem)
+        public static void ApplyRaceRules(List<Race> races, IPointSystem pointSystem)
         {
-            competition.PointSystem = pointSystem;
-            foreach (Race r in competition.Races)
+            foreach (Race r in races)
                 RaceRules.ComputePointsAndRanks(r, pointSystem);
         }
 
-        private static void ApplyDiscards(Competition competition)
+        public static void ApplyDiscards(List<Competitor> competitors, int discards)
         {
-            if (competition.Discards < 0)
+            if (discards < 0)
             {
                 throw new Exception("Discards must be positive number. ");
             }
 
             // prepared for new discards
-            foreach (Competitor c in competition.Competitors)
+            foreach (Competitor c in competitors)
             {
                 foreach (CompetitorResult cr in c.RaceResults)
                 {
@@ -44,7 +40,7 @@ namespace Sailing
                 }
             }
 
-            foreach (Competitor c in competition.Competitors)
+            foreach (Competitor c in competitors)
             {
                 int racesCount = c.RaceResults.Count;
 
@@ -54,7 +50,7 @@ namespace Sailing
                 //make discards
                 foreach (CompetitorResult cr in sortedResults)
                 {
-                    if (racesCount <= competition.Discards)
+                    if (racesCount <= discards)
                     {
                         cr.Discarded = true;
                     }
@@ -62,25 +58,26 @@ namespace Sailing
                 }
             }
         }
-        private static void ComputeRanks(Competition competition)
+
+        public static List<CompetitorsRankInCompetition> ComputeRanks(List<Competitor> competitors, bool descendingPoints)
         {
             IEnumerable<Competitor> sortedCompetitors;
 
 
-            if (competition.PointSystem.DescendingPoints())
+            if (descendingPoints)
             {
-                sortedCompetitors = competition.Competitors.OrderByDescending(p => p.NetPoints);
+                sortedCompetitors = competitors.OrderByDescending(p => p.NetPoints);
             }
             else
             {
-                sortedCompetitors = competition.Competitors.OrderBy(p => p.NetPoints);
+                sortedCompetitors = competitors.OrderBy(p => p.NetPoints);
             }
 
-            competition.Ranks = new List<CompetitorsRankInCompetition>();
+            List<CompetitorsRankInCompetition> Ranks = new List<CompetitorsRankInCompetition>();
 
             /* Temporary arrays for computing ranks from points*/
-            int[] rankArray = new int[competition.Competitors.Count];
-            float[] pointsArray = new float[competition.Competitors.Count];
+            int[] rankArray = new int[competitors.Count];
+            float[] pointsArray = new float[competitors.Count];
             int index = 0;
             foreach (Competitor c in sortedCompetitors)
             {
@@ -103,19 +100,20 @@ namespace Sailing
                     rankArray[x] = iter;
                 }
                 iter++;
-                if (x != 0)
-                {
-                    previous = pointsArray[x];
-                }
+                
+                previous = pointsArray[x];
+                
             }
 
             /*Refilling data structures from temporary arrays*/
             index = 0;
             foreach (Competitor c in sortedCompetitors)
             {
-                competition.Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
+                Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
                 index++;
             }
+
+            return Ranks;
         }
         /*
              Sum of points of every competitor, includes discards
@@ -124,11 +122,11 @@ namespace Sailing
              Sum of all points from myRaces
              Discard-omit the n last races
         */
-        private static void SumPoints(Competition competition)
+        public static void SumPoints(List<Competitor> competitors)
         {
             // Discards !! n = 1
 
-            foreach (Competitor c in competition.Competitors)
+            foreach (Competitor c in competitors)
             {
                 //left out n=1 worst races
 
