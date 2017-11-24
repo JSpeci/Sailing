@@ -10,81 +10,31 @@ namespace Sailing.Tests
     public class CompetitionRulesTests
     {
 
-        /*
-            Implementace Tie - dělá se podle ranků, 
-
-            R1 R2  R3 R4 součet
-        C1                  5
-        C2                  6        
-        C3                  6
-        pokud mají stejně - podívám se na jejich nejlepší závod, a vyberu toho, čí nejlepší závod byl lepší -
-        pokud mají oba svůj nejlepší závod stejný, podívám se, který z nich byl dřív v competition
-
-            2 3 4 2
-            2 1 2 7
-
-
-        */
         [Fact]
         public void Should_apply_discards()
         {
-            List<Competitor> competitors = new List<Competitor>();
-            Competitor c = new Competitor("AAA");
-            CompetitorResult cr3 = new CompetitorResult(c, 3);
-            CompetitorResult cr2 = new CompetitorResult(c, 2);
-            c.RaceResults.Add(new CompetitorResult(c, 1));
-            c.RaceResults.Add(new CompetitorResult(c, 2));
-            c.RaceResults.Add(cr2);
-            c.RaceResults.Add(cr3);
-            competitors.Add(c);
+            List<Competitor> competitors = GetCompetitors(4);
 
             CompetitionRules.ApplyDiscards(competitors, 1);
-            Assert.True(cr3.Discarded);
+            CheckDiscards(competitors, 1);
 
             CompetitionRules.ApplyDiscards(competitors, 2);
-            Assert.True(cr3.Discarded);
-            Assert.True(cr2.Discarded);
+            CheckDiscards(competitors, 2);
         }
 
         [Fact]
         public void Should_compute_ranks_123()
         {
-            List<Competitor> competitors = new List<Competitor>();
-            Competitor c;
-
-            c = new Competitor("AAA");
-            c.NetPoints = 10;
-            competitors.Add(c);
-
-            c = new Competitor("BBB");
-            c.NetPoints = 20;
-            competitors.Add(c);
-
-            c = new Competitor("CCC");
-            c.NetPoints = 30;
-            competitors.Add(c);
-
+            List<Competitor> competitors = GetCompetitors(3);
+            SetUpNetPoints(competitors, 10, 20, 30);
             AssertRanks(CompetitionRules.ComputeRanks(competitors, false), 1, 2, 3);
         }
 
         [Fact]
         public void Should_compute_ranks_122()
         {
-            List<Competitor> competitors = new List<Competitor>();
-            Competitor c;
-
-            c = new Competitor("AAA");
-            c.NetPoints = 10;
-            competitors.Add(c);
-
-            c = new Competitor("BBB");
-            c.NetPoints = 20;
-            competitors.Add(c);
-
-            c = new Competitor("CCC");
-            c.NetPoints = 20;
-            competitors.Add(c);
-
+            List<Competitor> competitors = GetCompetitors(3);
+            SetUpNetPoints(competitors, 10, 20, 20);
             AssertRanks(CompetitionRules.ComputeRanks(competitors, false), 1, 2, 2);
         }
 
@@ -109,6 +59,42 @@ namespace Sailing.Tests
             //33+66+99 = 198
             //44+88+132 = 264
             AssertNetPoints(competitors, 66, 132, 198, 264); // 1 discarded
+
+
+        }
+
+        private void CheckDiscards(List<Competitor> competitors, int countOfdiscards)
+        {
+            //check if the wors pointed race of each competitor is discarded
+            List<CompetitorResult> shouldBeDiscarded = new List<CompetitorResult>();
+            foreach (Competitor c in competitors)
+            {
+                //find max pointed raceResult in c.RaceResults
+
+                IEnumerable<CompetitorResult> sorted = c.RaceResults.OrderByDescending(i => i.PointsInRace);
+
+                for(int x = 0; x < countOfdiscards; x++)
+                {
+                    shouldBeDiscarded.Add(sorted.ElementAt<CompetitorResult>(x));
+                }
+            }
+            foreach(CompetitorResult cr in shouldBeDiscarded)
+            {
+                Assert.True(cr.Discarded);
+            }
+        }
+
+        private void SetUpNetPoints(List<Competitor> competitors, params int[] netPoints)
+        {
+            if(competitors.Count == netPoints.Length)
+            {
+                int index = 0;
+                foreach(Competitor c in competitors)
+                {
+                    c.NetPoints = netPoints[index];
+                    index++;
+                }
+            }
         }
 
         private List<Competitor> GetCompetitors(int numOfCompetitors)

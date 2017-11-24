@@ -59,6 +59,74 @@ namespace Sailing
             }
         }
 
+
+        /*
+            Implementace Tie - dělá se podle ranků, 
+
+            R1 R2  R3 R4 součet
+        C1                  5
+        C2                  6        
+        C3                  6
+        pokud mají stejně - podívám se na jejich nejlepší závod, a vyberu toho, čí nejlepší závod byl lepší -
+        pokud mají oba svůj nejlepší závod stejný, podívám se, který z nich byl dřív v competition
+
+            2 3 4 2
+            2 1 2 7
+
+
+        */
+
+        public static List<CompetitorsRankInCompetition> ComputeRanks2(List<Competitor> competitors)
+        {
+            IEnumerable<Competitor> sortedCompetitors;
+
+            //netPoints should not be used
+            sortedCompetitors = competitors.OrderByDescending(p => p.NetPoints);
+
+    
+            List<CompetitorsRankInCompetition> Ranks = new List<CompetitorsRankInCompetition>();
+
+            /* Temporary arrays for computing ranks from points*/
+            int[] rankArray = new int[competitors.Count];
+            float[] pointsArray = new float[competitors.Count];
+            int index = 0;
+            foreach (Competitor c in sortedCompetitors)
+            {
+                pointsArray[index] = c.NetPoints;
+                index++;
+            }
+
+            int iter = 1;   //rank for competitors with different sum of points
+            float previous = -1F;   //temporary variable
+            for (int x = 0; x < pointsArray.Length; x++)
+            {
+                //if competitor has same sum of points as previous competitor, they have same rank
+                if (previous == pointsArray[x])
+                {
+                    rankArray[x] = rankArray[x - 1];
+                }
+                else
+                {
+                    // rank assigned by order
+                    rankArray[x] = iter;
+                }
+                iter++;
+
+                previous = pointsArray[x];
+
+            }
+
+            /*Refilling data structures from temporary arrays*/
+            index = 0;
+            foreach (Competitor c in sortedCompetitors)
+            {
+                Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
+                index++;
+            }
+
+            return Ranks;
+        }
+
         public static List<CompetitorsRankInCompetition> ComputeRanks(List<Competitor> competitors, bool descendingPoints)
         {
             IEnumerable<Competitor> sortedCompetitors;
