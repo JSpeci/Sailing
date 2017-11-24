@@ -35,7 +35,7 @@ namespace Sailing
                             cResTemp = cRes;
                         }
                     }
-                    sb.Append(String.Format("{0,8}", cResTemp.Discarded ? ("(" + cResTemp.PointsInRace.ToString() + ")") : cResTemp.PointsInRace.ToString()));
+                    sb.Append(String.Format("{0,8}", cResTemp.Discarded ? ("(" + cResTemp.RaceRank.ToString() + ")") : cResTemp.RaceRank.ToString()));
                 }
                 sb.Append(String.Format("{0,8}{1,8}", cRank.competitor.NetPoints.ToString(), cRank.competitor.TotalPoints.ToString()));
                 sb.Append("\n");

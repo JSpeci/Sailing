@@ -15,7 +15,7 @@ namespace Sailing
             ApplyRaceRules(competition.Races, pointSystem);
             ApplyDiscards(competition.Competitors, competition.Discards);
             SumPoints(competition.Competitors);
-            competition.Ranks = ComputeRanks(competition.Competitors, pointSystem.DescendingPoints());
+            competition.Ranks = ComputeRanks(competition.Competitors);
         }
 
         public static void ApplyRaceRules(List<Race> races, IPointSystem pointSystem)
@@ -60,6 +60,69 @@ namespace Sailing
         }
 
 
+
+        public static List<CompetitorsRankInCompetition> ComputeRanks(List<Competitor> competitors)
+        {
+            IEnumerable<Competitor> sortedCompetitors;
+
+            //netPoints should not be used
+            //sortedCompetitors = competitors.OrderByDescending(p);
+
+            sortedCompetitors = competitors.OrderBy(r => r.SumOfRanks);
+
+
+            List<CompetitorsRankInCompetition> Ranks = new List<CompetitorsRankInCompetition>();
+
+            // Temporary arrays for computing ranks from points
+            int[] rankArray = new int[competitors.Count];
+            float[] sumOfRanksArray = new float[competitors.Count];
+            int index = 0;
+            foreach (Competitor c in sortedCompetitors)
+                sumOfRanksArray[index++] = c.SumOfRanks;
+
+            int iter = 1;   //rank for competitors with different sum of points
+            float previous = -1F;   //temporary variable
+            for (int x = 0; x < sumOfRanksArray.Length; x++)
+            {
+                //if competitor has same sum of points as previous competitor, they have same rank
+                if (previous == sumOfRanksArray[x])
+                {
+                    rankArray[x] = rankArray[x - 1]; 
+                }
+                else { rankArray[x] = iter; /* rank assigned by order */ }
+                iter++;
+                previous = sumOfRanksArray[x];
+            }
+
+            //Refilling data structures from temporary arrays
+            index = 0;
+            foreach (Competitor c in sortedCompetitors)
+                Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index++]));
+
+            //TIE decision making
+            //loop through sortedCompetitors and make list of Competitors with same rank, 
+            // then make decision, and distribute final ranks
+
+            List<CompetitorsRankInCompetition> forTie = new List<CompetitorsRankInCompetition>();
+            previous = 0;
+            foreach (CompetitorsRankInCompetition cr in Ranks)
+            {
+                if (cr.rankInCompetition == previous)
+                {
+                    forTie.Add(cr);
+                }
+                else
+                {
+                    TieDecision(forTie);
+                    //after Tie solution - clear temp array
+                    forTie.Clear();
+                }
+                previous = cr.rankInCompetition;
+            }
+
+            return Ranks;
+        }
+
         /*
             Implementace Tie - dělá se podle ranků, 
 
@@ -73,116 +136,43 @@ namespace Sailing
             2 3 4 2
             2 1 2 7
 
-
         */
 
-        public static List<CompetitorsRankInCompetition> ComputeRanks2(List<Competitor> competitors)
+        //public for unit test
+        public static void TieDecision(List<CompetitorsRankInCompetition> compeitorsForTies)
         {
-            IEnumerable<Competitor> sortedCompetitors;
+            //temporary array for computing values
+            //first index - competitor,
+            int[,] ranks = new int[compeitorsForTies.Count, compeitorsForTies[0].competitor.RaceResults.Count];
+            /*
+                R1 R2 R3 R4
+            C1
+            C2
+            C3 
+            
+             */
 
-            //netPoints should not be used
-            sortedCompetitors = competitors.OrderByDescending(p => p.NetPoints);
-
-    
-            List<CompetitorsRankInCompetition> Ranks = new List<CompetitorsRankInCompetition>();
-
-            /* Temporary arrays for computing ranks from points*/
-            int[] rankArray = new int[competitors.Count];
-            float[] pointsArray = new float[competitors.Count];
-            int index = 0;
-            foreach (Competitor c in sortedCompetitors)
+            //podívám se na jejich nejlepší závod, a vyberu toho, čí nejlepší závod byl lepší -
+            int x = 0;
+            int y = 0;
+            foreach (CompetitorsRankInCompetition cRank in compeitorsForTies)
             {
-                pointsArray[index] = c.NetPoints;
-                index++;
-            }
-
-            int iter = 1;   //rank for competitors with different sum of points
-            float previous = -1F;   //temporary variable
-            for (int x = 0; x < pointsArray.Length; x++)
-            {
-                //if competitor has same sum of points as previous competitor, they have same rank
-                if (previous == pointsArray[x])
+                foreach(CompetitorResult cr in cRank.competitor.RaceResults)
                 {
-                    rankArray[x] = rankArray[x - 1];
+                    ranks[x, y] = cr.RaceRank;
+                    y++;
                 }
-                else
-                {
-                    // rank assigned by order
-                    rankArray[x] = iter;
-                }
-                iter++;
-
-                previous = pointsArray[x];
-
+                x++;
             }
 
-            /*Refilling data structures from temporary arrays*/
-            index = 0;
-            foreach (Competitor c in sortedCompetitors)
+
+            for(x = 0; x < ranks.Length; x++)
             {
-                Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
-                index++;
-            }
-
-            return Ranks;
-        }
-
-        public static List<CompetitorsRankInCompetition> ComputeRanks(List<Competitor> competitors, bool descendingPoints)
-        {
-            IEnumerable<Competitor> sortedCompetitors;
-
-
-            if (descendingPoints)
-            {
-                sortedCompetitors = competitors.OrderByDescending(p => p.NetPoints);
-            }
-            else
-            {
-                sortedCompetitors = competitors.OrderBy(p => p.NetPoints);
-            }
-
-            List<CompetitorsRankInCompetition> Ranks = new List<CompetitorsRankInCompetition>();
-
-            /* Temporary arrays for computing ranks from points*/
-            int[] rankArray = new int[competitors.Count];
-            float[] pointsArray = new float[competitors.Count];
-            int index = 0;
-            foreach (Competitor c in sortedCompetitors)
-            {
-                pointsArray[index] = c.NetPoints;
-                index++;
-            }
-
-            int iter = 1;   //rank for competitors with different sum of points
-            float previous = -1F;   //temporary variable
-            for (int x = 0; x < pointsArray.Length; x++)
-            {
-                //if competitor has same sum of points as previous competitor, they have same rank
-                if (previous == pointsArray[x])
-                {
-                    rankArray[x] = rankArray[x - 1];
-                }
-                else
-                {
-                    // rank assigned by order
-                    rankArray[x] = iter;
-                }
-                iter++;
-                
-                previous = pointsArray[x];
                 
             }
 
-            /*Refilling data structures from temporary arrays*/
-            index = 0;
-            foreach (Competitor c in sortedCompetitors)
-            {
-                Ranks.Add(new CompetitorsRankInCompetition(c, rankArray[index]));
-                index++;
-            }
-
-            return Ranks;
         }
+
         /*
              Sum of points of every competitor, includes discards
              Goes throug every competitor
