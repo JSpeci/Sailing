@@ -188,13 +188,9 @@ namespace Sailing
                 {
                     if (cr.competitor.Equals(ct.competitor))
                     {
-                        cr.SetRank(rank + offset);
+                        cr.SetRank(rank);
                     }
-                    else
-                    {
-                        offset++;
-                    }
-                    
+                    offset++;
                 }
                 rank++;
             }
