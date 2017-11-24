@@ -49,6 +49,22 @@ namespace Sailing.Tests
         }
 
         [Fact]
+        public void Should_decide_ties()
+        {
+            List<Competitor> competitors = GetCompetitors(6);
+            SetUpRaceRanks(competitors[0].RaceResults, 1, 1, 2, 2);
+            SetUpRaceRanks(competitors[1].RaceResults, 2, 1, 2, 1);
+            SetUpRaceRanks(competitors[2].RaceResults, 2, 2, 2, 0);
+            SetUpRaceRanks(competitors[3].RaceResults, 1, 1, 2, 1);
+            SetUpRaceRanks(competitors[4].RaceResults, 1, 1, 1, 3);
+            SetUpRaceRanks(competitors[5].RaceResults, 2, 1, 1, 2);
+            List<CompetitorsRankInCompetition> ties = new List<CompetitorsRankInCompetition>();
+            foreach (Competitor c in competitors)
+                ties.Add(new CompetitorsRankInCompetition(c, 1));
+            CompetitionRules.TieDecision(ties);
+        }
+
+        [Fact]
         public void Should_sum_points()     //sum of total points and sum of net points when 1 discarded
         {
             List<Competitor> competitors = GetCompetitors(4);

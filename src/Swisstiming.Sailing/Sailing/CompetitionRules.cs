@@ -7,6 +7,16 @@ namespace Sailing
 {
     public class CompetitionRules
     {
+        private struct CompetitorIntegerForTie
+        {
+            public int raceResultsInteger;
+            public Competitor competitor;
+            public CompetitorIntegerForTie(Competitor c, int i)
+            {
+                this.competitor = c;
+                this.raceResultsInteger = i;
+            }
+        }
 
         public static void ApplyRules(Competition competition, IPointSystem pointSystem)
         {
@@ -141,9 +151,7 @@ namespace Sailing
         //public for unit test
         public static void TieDecision(List<CompetitorsRankInCompetition> compeitorsForTies)
         {
-            //temporary array for computing values
-            //first index - competitor,
-            int[,] ranks = new int[compeitorsForTies.Count, compeitorsForTies[0].competitor.RaceResults.Count];
+            
             /*
                 R1 R2 R3 R4
             C1
@@ -152,24 +160,46 @@ namespace Sailing
             
              */
 
-            //podívám se na jejich nejlepší závod, a vyberu toho, čí nejlepší závod byl lepší -
-            int x = 0;
-            int y = 0;
-            foreach (CompetitorsRankInCompetition cRank in compeitorsForTies)
+            List<Competitor> competitors = new List<Competitor>();
+            foreach (CompetitorsRankInCompetition cr in compeitorsForTies)
+                competitors.Add(cr.competitor);
+
+            List<CompetitionRules.CompetitorIntegerForTie> ties = new List<CompetitorIntegerForTie>();
+
+            int resultsAsInteger = 0;
+            foreach (Competitor c in competitors)
             {
-                foreach(CompetitorResult cr in cRank.competitor.RaceResults)
+                int dec = (int)Math.Pow((double)10, (double) c.RaceResults.Count-1);
+                foreach(CompetitorResult cr in c.RaceResults)
                 {
-                    ranks[x, y] = cr.RaceRank;
-                    y++;
+                    resultsAsInteger += cr.RaceRank * dec;
+                    dec /= 10;
                 }
-                x++;
+                ties.Add(new CompetitorIntegerForTie(c, resultsAsInteger));
+                resultsAsInteger = 0;
             }
 
-
-            for(x = 0; x < ranks.Length; x++)
+            IEnumerable<CompetitorIntegerForTie> sortedTies = ties.OrderBy(i => i.raceResultsInteger);
+            int rank = compeitorsForTies[0].rankInCompetition;
+            foreach(CompetitorsRankInCompetition cr in compeitorsForTies)
             {
-                
+                int offset = 0;
+                foreach (CompetitorIntegerForTie ct in sortedTies)
+                {
+                    if (cr.competitor.Equals(ct.competitor))
+                    {
+                        cr.SetRank(rank + offset);
+                    }
+                    else
+                    {
+                        offset++;
+                    }
+                    
+                }
+                rank++;
             }
+            int v = 0;
+
 
         }
 

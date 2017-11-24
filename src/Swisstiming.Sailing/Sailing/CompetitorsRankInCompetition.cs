@@ -14,5 +14,9 @@ namespace Sailing
             this.competitor = competitor;
             this.rankInCompetition = rank;
         }
+        public void SetRank(int val)
+        {
+            this.rankInCompetition = val;
+        }
     }
 }

@@ -62,11 +62,7 @@ namespace Sailing
         public override int GetHashCode()
         {
             var hashCode = -1926335857;
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<CompetitorResult>>.Default.GetHashCode(RaceResults);
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<CompetitorResult>>.Default.GetHashCode(RaceResults);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + NetPoints.GetHashCode();
-            hashCode = hashCode * -1521134295 + TotalPoints.GetHashCode();
             return hashCode;
         }
     }
