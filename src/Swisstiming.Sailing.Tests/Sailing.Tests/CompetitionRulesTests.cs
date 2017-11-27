@@ -31,21 +31,15 @@ namespace Sailing.Tests
         }
 
         [Fact]
-        public void Should_compute_ranks_122()
+        public void Should_compute_ranks_by_122()
         {
             List<Competitor> competitors = GetCompetitors(3);
+            SetUpRaceRanks(competitors[0].RaceResults, 1, 1, 2, 2); // 6
+            SetUpRaceRanks(competitors[1].RaceResults, 2, 1, 1, 1); // 5
+            SetUpRaceRanks(competitors[2].RaceResults, 1, 2, 2, 1); // 6
 
-            int index = 0;
-            foreach (Competitor c in competitors)
-            {
-                if (index >= 1)
-                {
-                    SetUpRaceRanks(c.RaceResults,20,20,20,20);
-                }
-                index++;
-            }
-
-            AssertRanks(CompetitionRules.ComputeRanks(competitors), 1, 2, 2);
+            
+            AssertRanks(CompetitionRules.ComputeRanks(competitors), 1, 2, 3);
         }
 
         [Fact]
@@ -55,13 +49,14 @@ namespace Sailing.Tests
             SetUpRaceRanks(competitors[0].RaceResults, 1, 1, 2, 2);
             SetUpRaceRanks(competitors[1].RaceResults, 2, 1, 2, 1);
             SetUpRaceRanks(competitors[2].RaceResults, 2, 2, 2, 0);
-            SetUpRaceRanks(competitors[3].RaceResults, 1, 1, 2, 1);
+            SetUpRaceRanks(competitors[3].RaceResults, 1, 2, 2, 1);
             SetUpRaceRanks(competitors[4].RaceResults, 1, 1, 1, 3);
             SetUpRaceRanks(competitors[5].RaceResults, 2, 1, 1, 2);
             List<CompetitorsRankInCompetition> ties = new List<CompetitorsRankInCompetition>();
             foreach (Competitor c in competitors)
                 ties.Add(new CompetitorsRankInCompetition(c, 1));
-            CompetitionRules.TieDecision(ties);
+            //tested method
+            AssertRanks(CompetitionRules.TieDecision(ties),1,2,3,4,5,6);
         }
 
         [Fact]
@@ -85,7 +80,6 @@ namespace Sailing.Tests
             //33+66+99 = 198
             //44+88+132 = 264
             AssertNetPoints(competitors, 66, 132, 198, 264); // 1 discarded
-
 
         }
 
@@ -126,11 +120,16 @@ namespace Sailing.Tests
         {
             //setting up competitors list
             List<Competitor> competitors = new List<Competitor>();
-            for(int x=1; x <= numOfCompetitors; x++)
+            for (int x = 1; x <= numOfCompetitors; x++)
             {
                 competitors.Add(new Competitor(x.ToString()));
             }
+            SetUpPoints(competitors);
+            return competitors;
+        }
 
+        private void SetUpPoints(List<Competitor> competitors)
+        { 
             //setting up net and total points by adding race results to competitors
             getRaceResults(competitors, 4);
 
@@ -145,8 +144,6 @@ namespace Sailing.Tests
                     cr.RaceRank = index++;
                 }
             }
-
-            return competitors;
         }
 
         //inserting raceResults into competitors

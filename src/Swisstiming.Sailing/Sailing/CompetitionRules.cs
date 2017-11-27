@@ -97,7 +97,7 @@ namespace Sailing
                 //if competitor has same sum of points as previous competitor, they have same rank
                 if (previous == sumOfRanksArray[x])
                 {
-                    rankArray[x] = rankArray[x - 1]; 
+                    rankArray[x] = rankArray[x - 1];
                 }
                 else { rankArray[x] = iter; /* rank assigned by order */ }
                 iter++;
@@ -114,23 +114,50 @@ namespace Sailing
             // then make decision, and distribute final ranks
 
             List<CompetitorsRankInCompetition> forTie = new List<CompetitorsRankInCompetition>();
-            previous = 0;
+            CompetitorsRankInCompetition previousCompetitor = new CompetitorsRankInCompetition();
             foreach (CompetitorsRankInCompetition cr in Ranks)
             {
-                if (cr.rankInCompetition == previous)
+                if(cr.rankInCompetition == previousCompetitor.rankInCompetition)
                 {
+                    if (forTie.Count == 0)
+                    {
+                        forTie.Add(previousCompetitor);
+                    }
                     forTie.Add(cr);
                 }
                 else
                 {
-                    TieDecision(forTie);
-                    //after Tie solution - clear temp array
-                    forTie.Clear();
+                    ApplyTies(forTie);
                 }
-                previous = cr.rankInCompetition;
+                previousCompetitor = cr;
             }
 
+            //in case of all results are in ties
+            ApplyTies(forTie);
+
+            Ranks.Sort();   //after applied ties must resort array
             return Ranks;
+        }
+
+        private static void ApplyTies(List<CompetitorsRankInCompetition> forTie)
+        {
+            if (forTie.Count > 0)
+            {
+                //solve Ties
+                List<CompetitorsRankInCompetition> ties = TieDecision(forTie);
+                foreach (CompetitorsRankInCompetition t in ties)
+                {
+                    foreach (CompetitorsRankInCompetition r in forTie)
+                    {
+                        if (t.competitor.Equals(r.competitor))
+                        {
+                            r.SetRank(t.rankInCompetition);
+                            break;
+                        }
+                    }
+                }
+            }
+            forTie.Clear();
         }
 
         /*
@@ -149,16 +176,8 @@ namespace Sailing
         */
 
         //public for unit test
-        public static void TieDecision(List<CompetitorsRankInCompetition> compeitorsForTies)
+        public static List<CompetitorsRankInCompetition> TieDecision(List<CompetitorsRankInCompetition> compeitorsForTies)
         {
-            
-            /*
-                R1 R2 R3 R4
-            C1
-            C2
-            C3 
-            
-             */
 
             List<Competitor> competitors = new List<Competitor>();
             foreach (CompetitorsRankInCompetition cr in compeitorsForTies)
@@ -169,8 +188,8 @@ namespace Sailing
             int resultsAsInteger = 0;
             foreach (Competitor c in competitors)
             {
-                int dec = (int)Math.Pow((double)10, (double) c.RaceResults.Count-1);
-                foreach(CompetitorResult cr in c.RaceResults)
+                int dec = (int)Math.Pow((double)10, (double)c.RaceResults.Count - 1);
+                foreach (CompetitorResult cr in c.RaceResults)
                 {
                     resultsAsInteger += cr.RaceRank * dec;
                     dec /= 10;
@@ -180,23 +199,25 @@ namespace Sailing
             }
 
             IEnumerable<CompetitorIntegerForTie> sortedTies = ties.OrderBy(i => i.raceResultsInteger);
-            int rank = compeitorsForTies[0].rankInCompetition;
-            foreach(CompetitorsRankInCompetition cr in compeitorsForTies)
+            int rank = compeitorsForTies[0].rankInCompetition;  //now they have same rank in this array as first
+            int offset = 0;
+            List<CompetitorsRankInCompetition> result = new List<CompetitorsRankInCompetition>();
+
+            foreach (CompetitorIntegerForTie ct in sortedTies)
             {
-                int offset = 0;
-                foreach (CompetitorIntegerForTie ct in sortedTies)
+                // find ct.competitor in competitorsForTies and assign rank
+                foreach (CompetitorsRankInCompetition cr in compeitorsForTies)
                 {
                     if (cr.competitor.Equals(ct.competitor))
                     {
-                        cr.SetRank(rank);
+                        result.Add(new CompetitorsRankInCompetition(ct.competitor,rank + offset++));
+                        //cr.SetRank(rank + offset++);
+                        break;
                     }
-                    offset++;
                 }
-                rank++;
             }
-            int v = 0;
 
-
+            return result;
         }
 
         /*

@@ -29,11 +29,6 @@ namespace Sailing
             this.Name = name;
         }
 
-        public override string ToString()
-        {
-            return "Competitor: " + Name;
-        }
-
         /* Competitor can be compared on points, sorted competitors can be ranked in all competition - many races in competition*/
         public int CompareTo(Competitor other)
         {
@@ -65,5 +60,11 @@ namespace Sailing
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             return hashCode;
         }
+
+        public override string ToString()
+        {
+            return "Competitor: " + Name;
+        }
+
     }
 }

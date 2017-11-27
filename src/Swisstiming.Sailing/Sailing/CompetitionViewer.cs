@@ -18,7 +18,7 @@ namespace Sailing
             {
                 sb.Append(String.Format("{0,8}", "Race" + raceNumber++.ToString()));
             }
-            sb.Append(String.Format("{0,8}{1,8}", "Net", "Total"));
+            sb.Append(String.Format("{0,8}{1,8}{2,8}", "Sum" ,"Net", "Total"));
             sb.Append("\n");
 
             //Table content
@@ -37,7 +37,7 @@ namespace Sailing
                     }
                     sb.Append(String.Format("{0,8}", cResTemp.Discarded ? ("(" + cResTemp.RaceRank.ToString() + ")") : cResTemp.RaceRank.ToString()));
                 }
-                sb.Append(String.Format("{0,8}{1,8}", cRank.competitor.NetPoints.ToString(), cRank.competitor.TotalPoints.ToString()));
+                sb.Append(String.Format("{0,8}{1,8}{2,8}",cRank.competitor.SumOfRanks, cRank.competitor.NetPoints.ToString(), cRank.competitor.TotalPoints.ToString()));
                 sb.Append("\n");
             }
 
