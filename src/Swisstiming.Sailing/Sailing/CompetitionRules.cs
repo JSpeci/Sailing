@@ -30,10 +30,12 @@ namespace Sailing
                 }
             }
 
+            //compare two race result recursively by raceResult
             private int CompareRaceResult(CompetitorsRankInCompetition x, CompetitorsRankInCompetition y, int index)
             {
                 if (index < x.competitor.RaceResults.Count && index < y.competitor.RaceResults.Count)
                 {
+                    // while are raceresults same, compare next in raceresult list of competitor
                     if (x.competitor.RaceResults[index].RaceRank.CompareTo(y.competitor.RaceResults[index].RaceRank) == 0)
                     {
                         return CompareRaceResult(x, y, index + 1);
@@ -102,8 +104,6 @@ namespace Sailing
             }
         }
 
-
-
         public static List<CompetitorsRankInCompetition> ComputeRanks(List<Competitor> competitors)
         {
             IEnumerable<Competitor> sortedCompetitors;
@@ -123,20 +123,6 @@ namespace Sailing
                 previous = competitor.SumOfRanks;
                 rank++;
             }
-
-            IEnumerable<IGrouping<int, CompetitorsRankInCompetition>> GroupedByRank = Ranks.GroupBy(r => r.rankInCompetition);
-
-            /*
-            rank = 1;
-            List<CompetitorsRankInCompetition> result = new List<CompetitorsRankInCompetition>();
-            foreach (IGrouping<int, CompetitorsRankInCompetition> group in GroupedByRank)
-            {
-                foreach(CompetitorsRankInCompetition cr in group)
-                {
-
-                }
-            }*/
-            
 
             return ApplyRankRulesWithTies(Ranks);
         }
@@ -166,8 +152,6 @@ namespace Sailing
 
             return result;
         }
-
-
 
         /*
              Sum of points of every competitor, includes discards
