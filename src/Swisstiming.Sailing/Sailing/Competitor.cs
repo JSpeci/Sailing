@@ -39,12 +39,13 @@ namespace Sailing
         {
             int sum = 0;
             foreach(CompetitorResult cr in RaceResults)
-            {
+            {/*
                 //sum only not discarded raceRanks
                 if (!cr.Discarded)
                 {
                     sum += cr.RaceRank;
-                }
+                }*/
+                sum += cr.RaceRank;
             }
             SumOfRanks = sum;
             return sum;

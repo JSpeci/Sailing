@@ -20,6 +20,8 @@ namespace Sailing
             Competition competition = CompetitorsLoader.LoadCompetitorsFromDirectoryPath("./data1/");
             //competition.ApplyRules(new CustomPointSystem());
 
+            competition.Discards = 1;
+
             CompetitionRules.ApplyRules(competition, new CustomPointSystem());
 
             //output

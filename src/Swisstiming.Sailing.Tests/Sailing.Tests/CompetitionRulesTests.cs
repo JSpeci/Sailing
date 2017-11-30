@@ -34,7 +34,7 @@ namespace Sailing.Tests
         }
 
         [Fact]
-        public void Should_compute_ranks_by_122()
+        public void Should_compute_ranks_by_122_to_123()
         {
             List<Competitor> competitors = GetCompetitors(3);
             SetUpRaceRanks(competitors[0].RaceResults, 2, 1, 1, 1); // 5
@@ -45,7 +45,7 @@ namespace Sailing.Tests
         }
 
         [Fact]
-        public void Should_compute_ranks_by_122_B()
+        public void Should_compute_ranks_by_122_to_123_B()
         {
             List<Competitor> competitors = GetCompetitors(3);
             SetUpRaceRanks(competitors[0].RaceResults, 20, 10, 10, 10); // 50
@@ -69,10 +69,24 @@ namespace Sailing.Tests
             List<CompetitorsRankInCompetition> ties = new List<CompetitorsRankInCompetition>();
             foreach (Competitor c in competitors)
                 ties.Add(new CompetitorsRankInCompetition(c, 1));
+
             //tested method
-
-
             AssertRanks(CompetitionRules.ApplyRankRulesWithTies(ties), 1, 2, 3, 4, 5, 6); //not 1 1 1 1 1 1 1
+        }
+
+        [Fact]
+        public void Should_decide_ties_when_all_results_are_same_And_some_discarded()
+        {
+            List<Competitor> competitors = GetCompetitors(2);
+            SetUpRaceRanks(competitors[0].RaceResults, 1, 1, 1, 3);
+            SetUpRaceRanks(competitors[1].RaceResults, 1, 1, 1, 3);
+            competitors[0].RaceResults[0].Discarded = true;
+
+            List<CompetitorsRankInCompetition> ties = new List<CompetitorsRankInCompetition>();
+            foreach (Competitor c in competitors)
+                ties.Add(new CompetitorsRankInCompetition(c, 1));
+
+            AssertRanks(CompetitionRules.ApplyRankRulesWithTies(ties), 2,1); //not 1 1
         }
 
         [Fact]

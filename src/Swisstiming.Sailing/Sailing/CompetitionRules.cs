@@ -35,6 +35,11 @@ namespace Sailing
             {
                 if (index < x.competitor.RaceResults.Count && index < y.competitor.RaceResults.Count)
                 {
+                    
+                    if(x.competitor.RaceResults[index].Discarded || y.competitor.RaceResults[index].Discarded)
+                    {
+                        return 0;  //both of race result discarded, do not compare, as same
+                    }
                     // while are raceresults same, compare next in raceresult list of competitor
                     if (x.competitor.RaceResults[index].RaceRank.CompareTo(y.competitor.RaceResults[index].RaceRank) == 0)
                     {
@@ -47,7 +52,8 @@ namespace Sailing
                 }
                 else
                 {
-                    return -1; //terminus
+                    //terminus
+                    return 0;
                 }
             }
 
