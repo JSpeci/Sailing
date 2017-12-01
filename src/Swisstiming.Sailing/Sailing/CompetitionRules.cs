@@ -7,58 +7,6 @@ namespace Sailing
 {
     public class CompetitionRules
     {
-
-        public class TieComparer : IComparer<CompetitorsRankInCompetition>
-        {
-            /*
-                  Less than zero 
-                    This instance precedes obj in the sort order. 
-                  Zero 
-                    This instance occurs in the same position in the sort order as obj. 
-                  Greater than zero 
-                    This instance follows obj in the sort order. 
-            */
-            public int Compare(CompetitorsRankInCompetition x, CompetitorsRankInCompetition y)
-            {
-                if (x.competitor.SumOfRanks.CompareTo(y.competitor.SumOfRanks) == 0)
-                {
-                    return CompareRaceResult(x, y, 0);
-                }
-                else
-                {
-                    return x.competitor.SumOfRanks.CompareTo(y.competitor.SumOfRanks);
-                }
-            }
-
-            //compare two race result recursively by raceResult
-            private int CompareRaceResult(CompetitorsRankInCompetition x, CompetitorsRankInCompetition y, int index)
-            {
-                if (index < x.competitor.RaceResults.Count && index < y.competitor.RaceResults.Count)
-                {
-                    
-                    if(x.competitor.RaceResults[index].Discarded || y.competitor.RaceResults[index].Discarded)
-                    {
-                        return 0;  //both of race result discarded, do not compare, as same
-                    }
-                    // while are raceresults same, compare next in raceresult list of competitor
-                    if (x.competitor.RaceResults[index].RaceRank.CompareTo(y.competitor.RaceResults[index].RaceRank) == 0)
-                    {
-                        return CompareRaceResult(x, y, index + 1);
-                    }
-                    else
-                    {
-                        return x.competitor.RaceResults[index].RaceRank.CompareTo(y.competitor.RaceResults[index].RaceRank);
-                    }
-                }
-                else
-                {
-                    //terminus
-                    return 0;
-                }
-            }
-
-        }
-
         public static void ApplyRules(Competition competition, IPointSystem pointSystem)
         {
             //deafult pointSystem
